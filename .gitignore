@@ -1,11 +1,14 @@
 /feed/dist
 /feed/node_modules
+/feed/package-lock.json
 
 /authentication/dist
 /authentication/node_modules
+/authentication/package-lock.json
 
 /ui/dist
 /ui/node_modules
+/ui/package-lock.json
 
 # Logs
 logs
