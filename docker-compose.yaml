@@ -1,0 +1,103 @@
+version: "3"
+networks:
+  example-microservices:
+    driver: bridge
+services:
+  authentication:
+    build:
+      dockerfile: Dockerfile
+      context: ./authentication
+    image: authentication
+    container_name: authentication
+      # -----------------
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./:/home/node/app/
+      - /home/node/app/node_modules
+    networks:
+      - example-microservices
+    depends_on:
+      - db
+
+  feed:
+    build:
+      dockerfile: Dockerfile
+      context: ./feed
+    image: feed
+    container_name: feed
+      # -----------------
+    ports:
+      - "4002:4002"
+    volumes:
+      - ./:/home/node/app/
+      - /home/node/app/node_modules
+    networks:
+      - example-microservices
+    depends_on:
+      - db
+
+  db:
+    networks:
+      - example-microservices
+    platform: linux/x86_64
+    image: mysql:8.0.32
+    ulimits:
+      nofile:
+        soft: 20000
+        hard: 40000
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: example_database
+      MYSQL_USER: demo_user
+      MYSQL_PASSWORD: 123456
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - "db:/var/lib/mysql"
+    command: |
+      mysqld --initialize
+    ports:
+      - "3306:3306"
+
+  rabbitmq:
+    image: rabbitmq:3.9.28-management-alpine
+    container_name: rabbitmq
+    ports:
+        - 5672:5672
+        - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=123456
+    networks:
+      - example-microservices
+
+  # autocrade-redis:
+  #   image: "bitnami/redis:latest"
+  #   container_name: autocrade-redis
+  #   ports:
+  #     - "6379:6379"
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=yes
+  #   volumes:
+  #     - redis_data:/bitnami/redis/data
+  #   networks:
+  #     - autocrade
+
+  # redis-commander:
+  #   container_name: redis-commander
+  #   hostname: redis-commander
+  #   image: ghcr.io/joeferner/redis-commander:latest
+  #   build: .
+  #   environment:
+  #     - REDIS_HOSTS=local:autocrade-redis:6379
+  #   ports:
+  #     - "8081:8081"
+  #   networks:
+  #     - autocrade
+      
+volumes:
+  dbdata:
+  redis_data:
+  db:
+    driver:
+      local
