@@ -4,6 +4,9 @@
 /authentication/dist
 /authentication/node_modules
 
+/ui/dist
+/ui/node_modules
+
 # Logs
 logs
 *.log
