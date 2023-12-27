@@ -1,0 +1,18 @@
+namespace: default
+appName: example-microservices
+replicaCount: 2
+
+image:
+  name: mahmudulazamshohan/authentication
+  tag: "1.2"
+
+containerPort: 4001
+servicePort: 80
+protocalType: http
+
+configMap:
+  name: example-configmap-v1
+
+serviceType: NodePort
+
+ingressHost: localhost

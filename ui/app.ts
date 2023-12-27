@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
-import process from 'process';
-import winston, { format, transports } from 'winston';
+import { format, transports } from 'winston';
 import expressWinston from 'express-winston';
 
 const { combine, colorize, json } = format;
@@ -19,7 +18,9 @@ app.use(expressWinston.logger({
 }));
 
 app.get('/', (request: Request, response: Response) => {
-    response.send({ name: "abcd" });
+    response.send({
+        name: "testing...."
+    });
 });
 
 app.listen(PORT, () => console.log(`Server started at ${PORT}`));

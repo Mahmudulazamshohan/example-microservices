@@ -36,7 +36,6 @@ export const loggerOptions: Params = {
         } else if (res.statusCode >= HttpStatus.BAD_REQUEST || err) {
           return 'warn';
         }
-
         return 'info';
       },
     },

@@ -1,39 +1,38 @@
-version: "3"
+version: "3.8"
 networks:
   example-microservices:
     driver: bridge
 services:
   authentication:
     build:
-      dockerfile: Dockerfile
-      context: ./authentication
+      dockerfile: ./authentication/authentication.dockerfile
     image: authentication
     container_name: authentication
+    working_dir: /app
       # -----------------
     ports:
       - "4001:4001"
     volumes:
-      - ./:/home/node/app/
-      - /home/node/app/node_modules
+      - ./authentication:/app
     networks:
       - example-microservices
+    env_file: ./authentication/.env
     depends_on:
       - db
 
   feed:
     build:
-      dockerfile: Dockerfile
-      context: ./feed
+      dockerfile: ./feed/feed.dockerfile
     image: feed
     container_name: feed
-      # -----------------
+    working_dir: /app
     ports:
       - "4002:4002"
     volumes:
-      - ./:/home/node/app/
-      - /home/node/app/node_modules
+      - ./feed:/app
     networks:
       - example-microservices
+    env_file: ./feed/.env
     depends_on:
       - db
 
@@ -41,35 +40,35 @@ services:
     networks:
       - example-microservices
     platform: linux/x86_64
-    image: mysql:8.0.32
+    image: mysql:8.0c
     ulimits:
       nofile:
         soft: 20000
         hard: 40000
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: example_database
-      MYSQL_USER: demo_user
+      MYSQL_DATABASE: example_db
+      MYSQL_USER: user123456
       MYSQL_PASSWORD: 123456
       MYSQL_ROOT_HOST: '%'
     volumes:
       - "db:/var/lib/mysql"
-    command: |
-      mysqld --initialize
+    command: --default-authentication-plugin=mysql_native_password
     ports:
       - "3306:3306"
 
-  rabbitmq:
-    image: rabbitmq:3.9.28-management-alpine
-    container_name: rabbitmq
-    ports:
-        - 5672:5672
-        - 15672:15672
-    environment:
-      - RABBITMQ_DEFAULT_USER=root
-      - RABBITMQ_DEFAULT_PASS=123456
-    networks:
-      - example-microservices
+  # rabbitmq:
+  #   image: rabbitmq:3.9.28-management-alpine
+  #   container_name: rabbitmq
+  #   ports:
+  #       - 5672:5672
+  #       - 15672:15672
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=root
+  #     - RABBITMQ_DEFAULT_PASS=123456
+  #   networks:
+  #     - example-microservices
 
   # autocrade-redis:
   #   image: "bitnami/redis:latest"

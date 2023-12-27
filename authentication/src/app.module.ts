@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import { loggerOptions } from './config/logger';
+import { UsersModule } from './users/users.module';
+import { TypeOrmConfig } from './config/typeorm';
 
 @Module({
   imports: [
@@ -11,6 +13,8 @@ import { loggerOptions } from './config/logger';
       envFilePath: '.env',
       isGlobal: true,
     }),
+    TypeOrmConfig,
+    UsersModule,
   ],
   controllers: [],
   providers: [ConfigService],
