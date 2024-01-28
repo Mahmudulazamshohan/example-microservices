@@ -8,9 +8,8 @@ export const IGNORED_ROUTES = new Set(['/health', '/favicon.ico']);
 export const loggerOptions: Params = {
   pinoHttp: [
     {
-      ...(process.env.NODE_ENV === 'production'
-        ? {}
-        : {
+      ...(process.env.NODE_ENV === 'development'
+        ? {
             level: 'debug',
             transport: {
               target: 'pino-pretty',
@@ -21,7 +20,8 @@ export const loggerOptions: Params = {
                 ignore: 'req.headers,res.headers',
               },
             },
-          }),
+          }
+        : {}),
       autoLogging: {
         ignore: (req) => IGNORED_ROUTES.has((<Request>req).originalUrl),
       },

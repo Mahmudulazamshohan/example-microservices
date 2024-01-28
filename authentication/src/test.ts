@@ -10,6 +10,7 @@ const checkConnection = () => {
       database: process?.env?.MYSQL_NAME,
       connectTimeout: 3000,
     });
+
     connection.connect((err) => {
       console.error(err);
       if (err) {
@@ -21,23 +22,17 @@ const checkConnection = () => {
   });
 };
 
-let i = 0;
-
 const testConnection = async () => {
   try {
-    await checkConnection();
-    console.log('Connection established.');
-    process.exit(0);
+    const isConnected = await checkConnection();
+    console.log('Connection established.', isConnected);
   } catch (e) {
     console.error(e);
-    console.log(
-      `Connection not available. Attempted ${++i} time${i !== 1 ? 's' : ''}.`,
-    );
   }
 };
 
+process.on('SIGINT', () => process.exit(0));
+
 (async () => {
   await testConnection();
-  setInterval(testConnection, 3000);
-  setTimeout(() => process.exit(1), 120000);
 })();

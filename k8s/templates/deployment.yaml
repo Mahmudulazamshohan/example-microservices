@@ -18,16 +18,26 @@ spec:
     spec:
       containers:
         - name: {{ .Values.appName }}
-          image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
             - containerPort: {{ .Values.containerPort }}
-          envFrom:
-           - configMapRef:
-               name: {{ .Values.configMap.name }}
+          env:
+           - name: MYSQL_HOST
+             value: "{{ .Values.MYSQL_HOST }}"
+           - name: MYSQL_PORT
+             value: "{{ .Values.MYSQL_PORT }}"
+           - name: MYSQL_USER
+             value: "{{ .Values.MYSQL_USER }}"
+           - name: MYSQL_PASS
+             value: "{{ .Values.MYSQL_PASS }}"
+           - name: MYSQL_NAME
+             value: "{{ .Values.MYSQL_NAME }}"
+           - name: PORT
+             value: "{{ .Values.containerPort }}"
           resources:
             requests:
-              memory: "16Mi" 
-              cpu: "50m"    # 500milliCPUs (1/2 CPU)
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
             limits:
-              memory: "128Mi"
-              cpu: "100m"
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"

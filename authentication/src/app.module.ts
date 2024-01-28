@@ -5,6 +5,8 @@ import { LoggerModule } from 'nestjs-pino';
 import { loggerOptions } from './config/logger';
 import { UsersModule } from './users/users.module';
 import { TypeOrmConfig } from './config/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ENTITIES } from '@entities';
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { TypeOrmConfig } from './config/typeorm';
       isGlobal: true,
     }),
     TypeOrmConfig,
+    TypeOrmModule.forFeature(ENTITIES),
     UsersModule,
   ],
   controllers: [],

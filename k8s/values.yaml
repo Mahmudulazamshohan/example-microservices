@@ -3,8 +3,8 @@ appName: example-microservices
 replicaCount: 2
 
 image:
-  name: mahmudulazamshohan/authentication
-  tag: "1.2"
+  repository: mahmudulazamshohan/authentication
+  tag: "2.5"
 
 containerPort: 4001
 servicePort: 80
@@ -16,3 +16,17 @@ configMap:
 serviceType: NodePort
 
 ingressHost: localhost
+
+resources:
+  limits:
+    cpu: 512m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+MYSQL_HOST: db
+MYSQL_PORT: 3306
+MYSQL_USER: root
+MYSQL_PASS: 123456
+MYSQL_NAME: example_db
