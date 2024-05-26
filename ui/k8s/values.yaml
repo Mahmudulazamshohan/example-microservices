@@ -1,17 +1,17 @@
 namespace: default
-appName: example-microservices
-replicaCount: 2
+appName: ui
+replicaCount: 1
 
 image:
-  repository: mahmudulazamshohan/authentication
-  tag: "2.5"
+  repository: mahmudulazamshohan/ui
+  tag: "0.1"
 
-containerPort: 4001
+containerPort: 4003
 servicePort: 80
 protocalType: http
 
 configMap:
-  name: example-configmap-v1
+  name: example-configmap-v3
 
 serviceType: NodePort
 

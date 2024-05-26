@@ -1,0 +1,32 @@
+namespace: default
+appName: feed
+replicaCount: 1
+
+image:
+  repository: mahmudulazamshohan/authentication
+  tag: "2.5"
+
+containerPort: 4002
+servicePort: 82
+protocalType: http
+
+configMap:
+  name: example-configmap-v2
+
+serviceType: NodePort
+
+ingressHost: localhost
+
+resources:
+  limits:
+    cpu: 512m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+MYSQL_HOST: db
+MYSQL_PORT: 3306
+MYSQL_USER: root
+MYSQL_PASS: 123456
+MYSQL_NAME: example_db

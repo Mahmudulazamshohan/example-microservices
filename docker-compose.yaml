@@ -36,11 +36,28 @@ services:
     depends_on:
       - db
 
+  ui:
+    build:
+      dockerfile: ./ui/ui.dockerfile
+    image: ui
+    container_name: ui
+    working_dir: /app
+    ports:
+      - "4003:4003"
+    volumes:
+      - ./ui:/app
+    networks:
+      - example-microservices
+    env_file: ./ui/.env
+    depends_on:
+      - authentication
+      - feed
+
   db:
     networks:
       - example-microservices
     platform: linux/x86_64
-    image: mysql:8.0c
+    image: mysql:8.0
     ulimits:
       nofile:
         soft: 20000
@@ -69,18 +86,6 @@ services:
   #     - RABBITMQ_DEFAULT_PASS=123456
   #   networks:
   #     - example-microservices
-
-  # autocrade-redis:
-  #   image: "bitnami/redis:latest"
-  #   container_name: autocrade-redis
-  #   ports:
-  #     - "6379:6379"
-  #   environment:
-  #     - ALLOW_EMPTY_PASSWORD=yes
-  #   volumes:
-  #     - redis_data:/bitnami/redis/data
-  #   networks:
-  #     - autocrade
 
   # redis-commander:
   #   container_name: redis-commander

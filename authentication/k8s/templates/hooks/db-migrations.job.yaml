@@ -1,0 +1,58 @@
+# https://docs.sentry.io/server/installation/docker/#running-migrations
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-db-init"
+  labels:
+    app: {{ .Values.appName }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": "pre-upgrade,post-install"
+    "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
+    "helm.sh/hook-weight": "-5"
+spec:
+  suspend: false
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      name: "{{ .Release.Name }}-db-migrations"
+      labels:
+        app: {{ .Values.appName }}
+        release: "{{ .Release.Name }}"
+    spec:
+      restartPolicy: OnFailure
+      {{- if .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+      - name: db-migrations-job
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        # command: ["node ./node_modules/typeorm/cli.js -d ./dist/config/data-source.js", "migration:run"]
+        command: ["cd","dist"]
+        env:
+          - name: MYSQL_HOST
+            value: "{{ .Values.MYSQL_HOST }}"
+          - name: MYSQL_USER
+            value: "{{ .Values.MYSQL_USER }}"
+          - name: MYSQL_PORT
+            value: "{{ .Values.MYSQL_PORT }}"
+          - name: MYSQL_PASS
+            value: "{{ .Values.MYSQL_PASS }}"
+          - name: MYSQL_NAME
+            value: "{{ .Values.MYSQL_NAME }}"
+          - name: NODE_ENV
+            value: "{{.Values.NODE_ENV}}"
+          - name: PORT
+            value: "{{.Values.PORT}}"
+        resources:
+          requests:
+            memory: "{{ .Values.resources.requests.memory }}"
+            cpu: "{{ .Values.resources.requests.cpu }}"
+          limits:
+            memory: "{{ .Values.resources.limits.memory }}"
+            cpu: "{{ .Values.resources.limits.cpu }}"

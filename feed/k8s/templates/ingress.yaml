@@ -9,7 +9,7 @@ spec:
   - host: {{ .Values.ingressHost }}
     http:
       paths:
-      - path: /api/?(.*)
+      - path: /api/feed/?(.*)
         pathType: Prefix
         backend:
           service:

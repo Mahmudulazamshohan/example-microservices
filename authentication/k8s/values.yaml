@@ -1,0 +1,43 @@
+namespace: default
+appName: authentication
+replicaCount: 1
+
+image:
+  repository: mahmudulazamshohan/authentication
+  tag: "2.5"
+
+PORT: 4001
+servicePort: 81
+protocalType: http
+
+configMap:
+  name: example-configmap-v1
+
+serviceType: NodePort
+
+ingressHost: localhost
+
+resources:
+  limits:
+    cpu: 512m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+mysql:
+  enabled: true
+  auth:
+    username: "user123456"
+    password: "123456"
+    database: "authentication"
+    rootPassword: "authentication"
+  primary:
+    persistence:
+      enabled: false
+
+MYSQL_HOST: authentication-mysql
+MYSQL_PORT: 3306
+MYSQL_USER: user123456
+MYSQL_PASS: 123456
+MYSQL_NAME: authentication
