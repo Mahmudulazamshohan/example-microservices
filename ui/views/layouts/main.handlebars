@@ -1,9 +1,57 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>{{ title }}</title>
+  <title>{{ title }}</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    #loader {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 50px;
+      height: 50px;
+      animation: spin 2s linear infinite;
+      z-index: 1000;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    #root {
+      display: none;
+    }
+  </style>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  {{#each assets}}
+  <script defer src="{{this}}" onload="hideLoader()"></script>
+  {{/each}}
 </head>
+
 <body>
-    <h1>Welcome to {{ title }}</h1>
+  <div id="loader"></div>
+  {{{body}}}
 </body>
+<script>
+  function hideLoader() {
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('root').style.display = 'block';
+  }
+</script>
 </html>

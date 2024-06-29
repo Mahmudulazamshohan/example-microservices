@@ -3,4 +3,4 @@ dependencies:
   repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
   version: 8.8.3
 digest: sha256:807224333c473ee4490716daeb82b3af5025759c8955c1efbeb5f8a6f5a74367
-generated: "2024-05-06T00:44:36.190812+06:00"
+generated: "2024-05-26T22:16:29.338632+06:00"

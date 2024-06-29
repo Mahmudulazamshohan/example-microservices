@@ -3,77 +3,85 @@ networks:
   example-microservices:
     driver: bridge
 services:
+
+  db:
+    extends:
+      file: ./common/common-services.yaml
+      service: db
+    volumes:
+     - "db:/var/lib/mysql"
+    networks:
+      - example-microservices
+
   authentication:
     build:
-      dockerfile: ./authentication/authentication.dockerfile
+      context: ./authentication
+      dockerfile: authentication.dockerfile
     image: authentication
     container_name: authentication
-    working_dir: /app
-      # -----------------
     ports:
       - "4001:4001"
     volumes:
       - ./authentication:/app
-    networks:
-      - example-microservices
     env_file: ./authentication/.env
     depends_on:
       - db
+    networks:
+      - example-microservices
 
   feed:
     build:
-      dockerfile: ./feed/feed.dockerfile
+      context: ./feed
+      dockerfile: feed.dockerfile
     image: feed
     container_name: feed
-    working_dir: /app
     ports:
       - "4002:4002"
     volumes:
-      - ./feed:/app
-    networks:
-      - example-microservices
+      - ./feed:/usr/src/feed
     env_file: ./feed/.env
     depends_on:
       - db
+    networks:
+      - example-microservices
 
   ui:
     build:
-      dockerfile: ./ui/ui.dockerfile
+      context: ./ui
+      dockerfile: ui.dockerfile
     image: ui
     container_name: ui
-    working_dir: /app
     ports:
       - "4003:4003"
     volumes:
-      - ./ui:/app
-    networks:
-      - example-microservices
+      - ./ui:/usr/src/app
     env_file: ./ui/.env
     depends_on:
       - authentication
       - feed
-
-  db:
     networks:
       - example-microservices
-    platform: linux/x86_64
-    image: mysql:8.0
-    ulimits:
-      nofile:
-        soft: 20000
-        hard: 40000
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: example_db
-      MYSQL_USER: user123456
-      MYSQL_PASSWORD: 123456
-      MYSQL_ROOT_HOST: '%'
-    volumes:
-      - "db:/var/lib/mysql"
-    command: --default-authentication-plugin=mysql_native_password
-    ports:
-      - "3306:3306"
+  # db:
+  #   platform: linux/x86_64
+  #   image: mysql:8.0
+  #   ulimits:
+  #     nofile:
+  #       soft: 20000
+  #       hard: 40000
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 123456
+  #     MYSQL_DATABASE: authentication
+  #     MYSQL_USER: user123456
+  #     MYSQL_PASSWORD: 123456
+  #     MYSQL_ROOT_HOST: '%'
+  #   volumes:
+  #     - "db:/var/lib/mysql"
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   ports:
+  #     - "3306:3306"
+  #   networks:
+  #     - example-microservices
 
   # rabbitmq:
   #   image: rabbitmq:3.9.28-management-alpine
@@ -98,9 +106,15 @@ services:
   #     - "8081:8081"
   #   networks:
   #     - autocrade
-      
+
+  api-gateway:
+    extends:
+      file: ./common/common-services.yaml
+      service: api-gateway
+    networks:
+      - example-microservices
+        
 volumes:
-  dbdata:
   redis_data:
   db:
     driver:

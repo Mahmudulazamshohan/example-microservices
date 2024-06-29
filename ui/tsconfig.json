@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "jsx": "react",
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
@@ -22,18 +22,10 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@entities": [
-        "src/entities"
-      ],
-      "@entities/*": [
-        "src/entities/*"
-      ],
-    }
   },
   "exclude": [
     "node_modules",
     "dist",
-    "test"
-  ]
+    "src",
+  ],
 }

@@ -4,14 +4,14 @@ replicaCount: 1
 
 image:
   repository: mahmudulazamshohan/authentication
-  tag: "2.5"
+  tag: "2.6"
 
 PORT: 4001
 servicePort: 81
 protocalType: http
 
 configMap:
-  name: example-configmap-v1
+  name: example-configmap-v2
 
 serviceType: NodePort
 

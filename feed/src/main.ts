@@ -11,7 +11,6 @@ async function bootstrap() {
 
   app.useLogger(app.get(Logger));
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
-
   await app.listen(PORT, () => NestLogger.log(`Server Port at ${PORT}`));
   return app.getUrl();
 }
