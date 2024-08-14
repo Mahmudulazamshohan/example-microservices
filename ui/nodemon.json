@@ -1,5 +1,4 @@
 {
-    "execMap": {
-        "ts": "ts-node"
-    }
+    "ignore": ["node_modules"],
+    "exec": "ts-node --project tsconfig.node.json ./app.ts"
 }

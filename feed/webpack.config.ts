@@ -1,26 +1,18 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { ModuleFederationPlugin } = require('webpack').container;
 const path = require('path');
+const deps = require('./package.json').dependencies;
+const exposes = require('./src/components/exposes');
 
-export default {
-  entry: {
-    index: './index.tsx',
-  },
-  context: path.join(__dirname, './src/components'),
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-
-  stats: {
-    all: false,
-    warnings: true,
-    errors: true,
-    errorDetails: true,
-    colors: true,
-    chunks: true,
-  },
-
+module.exports = {
+  entry: path.join(__dirname, './src/components/index.ts'),
+  mode: 'development',
   devServer: {
-    compress: true,
-    port: 8082,
     host: '0.0.0.0',
     allowedHosts: 'all',
+    port: 8002,
+    open: false,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
@@ -28,36 +20,50 @@ export default {
         'X-Requested-With, content-type, Authorization',
       'X-Webpack-Dev-Server': '1',
     },
-    static: {
-      directory: path.join(__dirname, 'fontend'),
-    },
   },
-
-  output: {
-    filename: '[name].fontend.js',
-    path: path.join(__dirname, 'fontend'),
-  },
-
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
   },
-
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: 'http://localhost:8002/',
+  },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
+        test: /\.(js|jsx|tsx|ts)$/,
+        loader: 'ts-loader',
         exclude: /node_modules/,
-      },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        options: {
+          configFile: 'tsconfig.webpack.json',
+          transpileOnly: true,
+        },
       },
     ],
   },
-  plugins: [],
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
-  },
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'feed',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './CounterAppOne': './src/components/CounterAppOne.tsx',
+        './sections/FeedSection': './src/components/sections/FeedSection.tsx',
+      },
+      shared: {
+        ...deps,
+        react: { singleton: true, eager: true, requiredVersion: deps.react },
+        'react-dom': {
+          singleton: true,
+          eager: true,
+          requiredVersion: deps['react-dom'],
+        },
+        'react-router-dom': {
+          singleton: true,
+          eager: true,
+          requiredVersion: deps['react-router-dom'],
+        },
+      },
+    }),
+  ],
 };

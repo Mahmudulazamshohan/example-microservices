@@ -3,6 +3,9 @@ import { AppModule } from './app.module';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import { Logger as NestLogger, ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'path';
+import { writeFileSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +18,20 @@ async function bootstrap() {
 
   await app.listen(PORT, () => NestLogger.log(`Server Port at ${PORT}`));
 
+  const config = new DocumentBuilder()
+    .setTitle('API Documentation')
+    .setDescription('The API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  console.log(JSON.stringify(document, null, 2));
+  // Save the Swagger document as a JSON file
+  await writeFileSync(
+    join(__dirname, '../swagger.json'),
+    JSON.stringify(document, null, 2),
+  );
+  SwaggerModule.setup('api-docs', app, document);
   return app.getUrl();
 }
 

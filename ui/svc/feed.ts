@@ -36,6 +36,9 @@ export default {
     ],
     middlewares: [
         (req, res, next) => {
+            res.header({
+                'Authorization':'Bearer asdasd'
+            });
             next();
         }
     ],

@@ -2,7 +2,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { mysqlConfig } from './data-source';
-import { ENTITIES } from '@entities';
+import { ENTITIES } from '../entities';
 
 export const TypeOrmConfig = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],

@@ -1,39 +1,32 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "esModuleInterop": true,
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
     "sourceMap": true,
+    "skipLibCheck": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": true,
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "jsx": "react",
     "paths": {
-      "@entities": [
-        "src/entities"
-      ],
-      "@entities/*": [
-        "src/entities/*"
-      ],
-    }
+      "@entities": ["src/entities"],
+      "@entities/*": ["src/entities/*"],
+    },
   },
   "exclude": [
     "node_modules",
     "dist",
-    "test"
+    ".eslintrc.js"
   ]
 }

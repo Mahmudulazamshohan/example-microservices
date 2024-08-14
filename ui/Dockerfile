@@ -1,10 +1,14 @@
 # Use an official Node.js runtime as a parent image
 FROM node:18-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /ui
+
 COPY package*.json ./
 RUN npm install
 RUN npm install -g nodemon
+
 COPY . .
-EXPOSE 4003
-CMD ["npm", "start"]
+
+EXPOSE 4003 8003
+
+CMD npm run start:dev

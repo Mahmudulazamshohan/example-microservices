@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
-import { ENTITIES } from '@entities';
+import { ENTITIES } from '../entities';
 
 const mysqlConfig: MysqlConnectionOptions = {
   type: 'mysql',

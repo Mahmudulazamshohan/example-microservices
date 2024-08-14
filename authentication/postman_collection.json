@@ -1,0 +1,192 @@
+{
+  "item": [
+    {
+      "id": "ede63ea1-8a31-4239-a373-b5062509a6ba",
+      "name": "POST /signup",
+      "request": {
+        "description": {
+          "content": "signup",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            "signup"
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "header": [
+          {
+            "description": {
+              "content": "Authorization token",
+              "type": "text/plain"
+            },
+            "key": "Authorization",
+            "value": "your token"
+          }
+        ],
+        "method": "POST"
+      },
+      "response": [],
+      "event": []
+    },
+    {
+      "id": "52fab4ad-fce6-4981-9ebe-ca60fc98cb57",
+      "name": "POST /login",
+      "request": {
+        "description": {
+          "content": "login",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            "login"
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "header": [
+          {
+            "description": {
+              "content": "Authorization token",
+              "type": "text/plain"
+            },
+            "key": "Authorization",
+            "value": "your token"
+          }
+        ],
+        "method": "POST"
+      },
+      "response": [],
+      "event": []
+    },
+    {
+      "id": "a28538b5-b24c-4830-8bc8-512860ebeea1",
+      "name": "POST /refresh",
+      "request": {
+        "description": {
+          "content": "refresh",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            "refresh"
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "header": [
+          {
+            "description": {
+              "content": "Authorization token",
+              "type": "text/plain"
+            },
+            "key": "Authorization",
+            "value": "your token"
+          }
+        ],
+        "method": "POST"
+      },
+      "response": [],
+      "event": []
+    },
+    {
+      "id": "9b74ec62-8a77-4acc-b7e7-bdec6af67a17",
+      "name": "GET /me",
+      "request": {
+        "description": {
+          "content": "me",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            "me"
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "header": [
+          {
+            "description": {
+              "content": "Authorization token",
+              "type": "text/plain"
+            },
+            "key": "Authorization",
+            "value": "your token"
+          }
+        ],
+        "method": "GET"
+      },
+      "response": [],
+      "event": []
+    },
+    {
+      "id": "18ddd7a1-61d6-4619-adb2-cbe1957440df",
+      "name": "GET /users/profile",
+      "request": {
+        "description": {
+          "content": "getUserProfile",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            "users",
+            "profile"
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "header": [
+          {
+            "description": {
+              "content": "Authorization token",
+              "type": "text/plain"
+            },
+            "key": "Authorization",
+            "value": "your token"
+          }
+        ],
+        "method": "GET"
+      },
+      "response": [],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:4001",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "9fa226d2-ff47-4d81-a9d1-6cb4f8c11920",
+    "name": "You App",
+    "version": {
+      "raw": "1.0.1",
+      "major": 1,
+      "minor": 0,
+      "patch": 1,
+      "prerelease": [],
+      "build": [],
+      "string": "1.0.1"
+    },
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  }
+}

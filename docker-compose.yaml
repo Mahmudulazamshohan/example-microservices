@@ -16,13 +16,14 @@ services:
   authentication:
     build:
       context: ./authentication
-      dockerfile: authentication.dockerfile
+      dockerfile: Dockerfile
     image: authentication
     container_name: authentication
     ports:
       - "4001:4001"
+      - "8001:8001"
     volumes:
-      - ./authentication:/app
+      - ./authentication:/authentication
     env_file: ./authentication/.env
     depends_on:
       - db
@@ -32,13 +33,14 @@ services:
   feed:
     build:
       context: ./feed
-      dockerfile: feed.dockerfile
+      dockerfile: Dockerfile
     image: feed
     container_name: feed
     ports:
       - "4002:4002"
+      - "8002:8002"
     volumes:
-      - ./feed:/usr/src/feed
+      - ./feed:/feed
     env_file: ./feed/.env
     depends_on:
       - db
@@ -48,65 +50,21 @@ services:
   ui:
     build:
       context: ./ui
-      dockerfile: ui.dockerfile
+      dockerfile: Dockerfile
     image: ui
     container_name: ui
     ports:
       - "4003:4003"
+      - "8003:8003"
     volumes:
-      - ./ui:/usr/src/app
+      - ./ui:/ui
     env_file: ./ui/.env
     depends_on:
       - authentication
       - feed
     networks:
       - example-microservices
-  # db:
-  #   platform: linux/x86_64
-  #   image: mysql:8.0
-  #   ulimits:
-  #     nofile:
-  #       soft: 20000
-  #       hard: 40000
-  #   restart: always
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: 123456
-  #     MYSQL_DATABASE: authentication
-  #     MYSQL_USER: user123456
-  #     MYSQL_PASSWORD: 123456
-  #     MYSQL_ROOT_HOST: '%'
-  #   volumes:
-  #     - "db:/var/lib/mysql"
-  #   command: --default-authentication-plugin=mysql_native_password
-  #   ports:
-  #     - "3306:3306"
-  #   networks:
-  #     - example-microservices
-
-  # rabbitmq:
-  #   image: rabbitmq:3.9.28-management-alpine
-  #   container_name: rabbitmq
-  #   ports:
-  #       - 5672:5672
-  #       - 15672:15672
-  #   environment:
-  #     - RABBITMQ_DEFAULT_USER=root
-  #     - RABBITMQ_DEFAULT_PASS=123456
-  #   networks:
-  #     - example-microservices
-
-  # redis-commander:
-  #   container_name: redis-commander
-  #   hostname: redis-commander
-  #   image: ghcr.io/joeferner/redis-commander:latest
-  #   build: .
-  #   environment:
-  #     - REDIS_HOSTS=local:autocrade-redis:6379
-  #   ports:
-  #     - "8081:8081"
-  #   networks:
-  #     - autocrade
-
+  
   api-gateway:
     extends:
       file: ./common/common-services.yaml

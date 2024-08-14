@@ -31,5 +31,12 @@ export default {
             local: ['http://localhost:4003/main.js'],
         },
     ],
-    middlewares: [],
+    middlewares: [
+        (req, res, next) => {
+            res.header({
+                'Authorization':'Bearer asdasd'
+            });
+            next();
+        }
+    ],
 } as SVC;
