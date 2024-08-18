@@ -1,12 +1,29 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18-alpine as builder
+FROM node:18-alpine AS builder
 
 WORKDIR /authentication
-RUN apk --no-cache add --virtual builds-deps build-base python3
 
 COPY package*.json ./
-RUN npm install
+
+RUN npm install --omit=dev
+
+RUN npm install -g @nestjs/cli
+
 COPY . .
+
+
+RUN npm run build
+
+
+FROM node:18-alpine
+
+WORKDIR /authentication
+
+COPY --from=builder /authentication/dist ./dist
+COPY --from=builder /authentication/node_modules ./node_modules
+COPY --from=builder /authentication/package*.json ./
+
+COPY .env ./dist
+
 EXPOSE 4001
 
-CMD ["npm","run", "start:dev"]
+CMD node --max_old_space_size=512 dist/main

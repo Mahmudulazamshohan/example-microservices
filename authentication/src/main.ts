@@ -19,13 +19,12 @@ async function bootstrap() {
   await app.listen(PORT, () => NestLogger.log(`Server Port at ${PORT}`));
 
   const config = new DocumentBuilder()
-    .setTitle('API Documentation')
-    .setDescription('The API description')
+    .setTitle('Authentication Service')
+    .setDescription('Authentication API Swagger')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  console.log(JSON.stringify(document, null, 2));
   // Save the Swagger document as a JSON file
   await writeFileSync(
     join(__dirname, '../swagger.json'),

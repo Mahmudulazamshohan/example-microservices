@@ -21,7 +21,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       try {
         const user = this.jwtService.verify(token);
         this.attachUserToContext(context, type, user);
-        return true;
+        return !!user;
       } catch (error) {
         new Error(error);
       }
@@ -32,6 +32,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   private getAuthentication(context: ExecutionContext): string {
     let authorization: string;
+
     if (context.getType() === 'rpc') {
       authorization = context?.switchToRpc()?.getData()?.authorization;
     } else {
@@ -42,6 +43,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (!authorization) {
       throw new UnauthorizedException('No valid token was provided');
     }
+
     return authorization;
   }
 

@@ -22,7 +22,26 @@
         "operationId": "login",
         "summary": "login",
         "description": "Default description",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "Username of user",
+            "name": "username",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Password",
+            "name": "password",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -127,8 +146,8 @@
     }
   },
   "info": {
-    "title": "API Documentation",
-    "description": "The API description",
+    "title": "Authentication Service",
+    "description": "Authentication API Swagger",
     "version": "1.0",
     "contact": {}
   },
@@ -145,12 +164,25 @@
     "schemas": {
       "LoginDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of user"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
       },
       "User": {
         "type": "object",
         "properties": {
-          "userId": {
+          "user_id": {
             "type": "int"
           },
           "username": {
@@ -159,19 +191,30 @@
           "password": {
             "type": "string"
           },
-          "hashedRt": {
+          "hashed_rt": {
             "type": "string"
           },
-          "isActive": {
+          "is_active": {
             "type": "boolean"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "profile_picture_url": {
+            "type": "string"
           }
         },
         "required": [
-          "userId",
+          "user_id",
           "username",
           "password",
-          "hashedRt",
-          "isActive"
+          "hashed_rt",
+          "is_active",
+          "firstname",
+          "lastname"
         ]
       }
     }

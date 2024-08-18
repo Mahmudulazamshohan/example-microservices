@@ -1,14 +1,21 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsInt, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Profile } from './Profile';
 
 @Entity()
-@Index(['userId'])
+@Index(['user_id', 'is_active', 'last_login'])
 export class User {
   @ApiProperty({ type: 'int' })
   @PrimaryGeneratedColumn({ type: 'int' })
   @IsInt()
-  public userId: number;
+  public user_id: number;
 
   @ApiProperty({ type: 'string' })
   @Column({ type: 'varchar', length: 120 })
@@ -23,9 +30,42 @@ export class User {
   @ApiProperty({ type: 'string' })
   @Column({ type: 'varchar', length: 300 })
   @IsString()
-  public hashedRt: string;
+  public hashed_rt: string;
 
   @ApiProperty({ type: 'boolean' })
   @Column({ default: true })
-  isActive: boolean;
+  is_active: boolean;
+
+  @ApiProperty({ type: 'string' })
+  @Column({ type: 'varchar', length: 200 })
+  @IsString()
+  public firstname: string;
+
+  @ApiProperty({ type: 'string' })
+  @Column({ type: 'varchar', length: 200 })
+  @IsString()
+  public lastname: string;
+
+  @ApiProperty({ type: 'string', required: false })
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  @IsString()
+  public profile_picture_url: string | null;
+
+  // @CreateDateColumn({
+  //   type: 'timestamp',
+  //   nullable: true,
+  // })
+  // created_at: Date;
+
+  // @UpdateDateColumn({
+  //   type: 'timestamp',
+  //   nullable: true,
+  // })
+  // updated_at: Date;
+
+  @Column({ type: 'datetime', nullable: true })
+  last_login: Date;
+
+  @OneToOne(() => Profile, (profile) => profile.user)
+  profile: Profile;
 }

@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { FC } from 'react';
+
 import SharePost from '../features/SharePost';
 import PostList from '../features/PostList';
 
-const FeedSection: React.FC = () => {
+const FeedSection: FC = () => {
   return (
     <>
       <SharePost />

@@ -15,15 +15,18 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 export default function FeedCard() {
   const [liked, setLiked] = useState(false);
-  const getRandomNumber = (min = 100, max = 400) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
+  const getRandomNumber = (min = 100, max = 400) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
 
   return (
     <Card elevation={1.5}>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+          <Avatar
+            src="https://media.licdn.com/dms/image/D5603AQEm02djvZLyQw/profile-displayphoto-shrink_100_100/0/1707895378353?e=1729123200&v=beta&t=Nka-YlabpB2XchYXp3dGIp63JvrglkO1u8SaAiiUGUY"
+            sx={{ bgcolor: red[500] }}
+            aria-label="recipe"
+          >
             R
           </Avatar>
         }

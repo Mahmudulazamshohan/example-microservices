@@ -12,7 +12,20 @@ services:
      - "db:/var/lib/mysql"
     networks:
       - example-microservices
-
+  redis-cache:
+    extends:
+      file: ./common/common-services.yaml
+      service: redis-cache
+    volumes:
+     - "redis_data:/data"
+    networks:
+      - example-microservices
+  redis-commander:
+    extends:
+      file: ./common/common-services.yaml
+      service: redis-commander
+    networks:
+      - example-microservices
   authentication:
     build:
       context: ./authentication

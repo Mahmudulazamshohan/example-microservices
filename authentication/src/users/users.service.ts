@@ -33,7 +33,20 @@ export class UsersService {
     refreshToken: string,
   ): Promise<string> {
     const hashedRt = await bcrypt.hashSync(refreshToken, 10);
-    await this.userRepository.update(userId, { hashedRt });
+    await this.userRepository.update(userId, { hashed_rt: hashedRt });
     return hashedRt;
+  }
+
+  async updateLastLogin(payload: { username: string }) {
+    const lastLogin = new Date();
+    const user = await this.userRepository.update(
+      {
+        username: payload.username,
+      },
+      {
+        last_login: lastLogin,
+      },
+    );
+    return user;
   }
 }

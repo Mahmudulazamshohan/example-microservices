@@ -23,6 +23,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
       ?.get('Authorization')
       ?.replace('Bearer', '')
       ?.trim();
+    console.log('PWP-1089 bearer', refreshToken);
     return { ...payload, refreshToken };
   }
 }

@@ -2,7 +2,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
 const path = require('path');
-const deps = require('./package.json').dependencies;
+const deps = require('./package.json').devDependencies;
 
 module.exports = {
   entry: path.join(__dirname, './src/components/index.ts'),

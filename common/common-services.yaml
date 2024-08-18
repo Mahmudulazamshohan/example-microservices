@@ -36,31 +36,41 @@ services:
     networks:
       - example-microservices
 
-  # rabbitmq:
-  #   image: rabbitmq:3.9.28-management-alpine
-  #   container_name: rabbitmq
-  #   ports:
-  #       - 5672:5672
-  #       - 15672:15672
-  #   environment:
-  #     - RABBITMQ_DEFAULT_USER=root
-  #     - RABBITMQ_DEFAULT_PASS=123456
-  #   networks:
-  #     - example-microservices
+  rabbitmq:
+    image: rabbitmq:3.9.28-management-alpine
+    container_name: rabbitmq
+    ports:
+        - 5672:5672
+        - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=123456
+    networks:
+      - example-microservices
 
-  # redis-commander:
-  #   container_name: redis-commander
-  #   hostname: redis-commander
-  #   image: ghcr.io/joeferner/redis-commander:latest
-  #   build: .
-  #   environment:
-  #     - REDIS_HOSTS=local:autocrade-redis:6379
-  #   ports:
-  #     - "8081:8081"
-  #   networks:
-  #     - autocrade
+  redis-cache:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - example-microservices
+
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: ghcr.io/joeferner/redis-commander:latest
+    build: .
+    environment:
+      - REDIS_HOSTS=local:redis-cache:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - example-microservices
 
 volumes:
   db:
     driver:
       local
+  redis_data:

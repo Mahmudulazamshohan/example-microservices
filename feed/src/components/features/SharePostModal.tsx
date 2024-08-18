@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -9,20 +10,28 @@ import {
   Avatar,
   IconButton,
   TextField,
+  Theme,
+  SxProps,
 } from '@mui/material';
-import { CloseOutlined } from '@mui/icons-material';
+import CloseOutlined from '@mui/icons-material/CloseOutlined';
 
 interface SharePostModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const style = {
+const modalSx: SxProps<Theme> = {
   position: 'absolute' as const,
   top: '30%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '50%',
+  width: {
+    xs: '90%', // 90% width on extra-small screens
+    sm: '80%', // 80% width on small screens
+    md: '60%', // 60% width on medium screens
+    lg: '50%', // 50% width on large screens
+    xl: '40%', // 40% width on extra-large screens
+  },
   bgcolor: 'background.paper',
   boxShadow: 24,
   pt: 2,
@@ -31,6 +40,7 @@ const style = {
 };
 
 const SharePostModal: React.FC<SharePostModalProps> = ({ open, onClose }) => {
+
   return (
     <Modal
       open={open}
@@ -38,7 +48,7 @@ const SharePostModal: React.FC<SharePostModalProps> = ({ open, onClose }) => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Card sx={style}>
+      <Card sx={{ ...modalSx }}>
         <Box sx={{ p: 2, gap: 1 }}>
           <Box
             display={'flex'}
@@ -57,9 +67,9 @@ const SharePostModal: React.FC<SharePostModalProps> = ({ open, onClose }) => {
           </Box>
           <TextField
             multiline
-            rows={4} // Number of visible rows
-            variant="outlined" // You can use 'filled' or 'standard' as well
-            placeholder="Enter your text here"
+            rows={4}
+            variant="outlined"
+            placeholder="Share a post, write someting here"
             fullWidth
           />
         </Box>

@@ -91,7 +91,7 @@ const LoginPage: React.FC = () => {
             label="Remember me"
           />
           <Button
-            disabled={isLoading}
+            disabled={!username || !password}
             type="submit"
             fullWidth
             variant="contained"

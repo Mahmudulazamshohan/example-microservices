@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import * as path from 'path';
-import * as fs from 'fs';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
@@ -16,25 +15,30 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { AppService } from './app.service';
 import { RefreshTokenStrategy } from './refreshtoken.strategy';
-
+import { CacheModule } from '@nestjs/cache-manager';
+console.log('PATH===>', path.join(__dirname, '.env'));
 @Module({
   imports: [
     LoggerModule.forRoot(loggerOptions),
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: path.join(__dirname, '.env'),
       isGlobal: true,
     }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        host: configService.getOrThrow<string>('REDIS_HOST'),
+        port: configService.getOrThrow<string>('REDIS_PORT'),
+        ttl: Number(configService.getOrThrow<string>('REDIS_TTL')),
+      }),
+      inject: [ConfigService],
+    }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secretOrPrivateKey: await fs.readFileSync(
-          path.join(__dirname, '../private.key'),
-          'utf8',
-        ),
-        publicKey: await fs.readFileSync(
-          path.join(__dirname, '../public.key'),
-          'utf8',
-        ),
+        secretOrPrivateKey: configService.getOrThrow<string>('PRIVATE_KEY'),
+        publicKey: configService.getOrThrow<string>('PUBLIC_KEY'),
         signOptions: {
           expiresIn: configService.getOrThrow<string>('EXPIRES_IN'),
           algorithm: 'RS256',
@@ -43,7 +47,6 @@ import { RefreshTokenStrategy } from './refreshtoken.strategy';
       inject: [ConfigService],
     }),
     TypeOrmConfig,
-    PassportModule.register({ defaultStrategy: 'jwt' }),
     TypeOrmModule.forFeature(ENTITIES),
     UsersModule,
   ],

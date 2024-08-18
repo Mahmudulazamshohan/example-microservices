@@ -10,7 +10,7 @@ import {
   UseInterceptors,
   UseFilters,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './entities/User';
 
 import { UsersService } from './users/users.service';
@@ -40,23 +40,15 @@ export class AppController {
     return this.usersService.save();
   }
 
-  // @ApiOperation({ operationId: 'login' })
-  // @ApiBody({
-  //   type: LoginDto,
-  // })
-  @ApiSwagger({
-    operationId: 'login',
-    authentication: false,
-  })
+  @ApiQuery({ type: LoginDto })
+  @ApiSwagger({ operationId: 'login', authentication: false })
   @Post('/login')
   async login(@Body() user: LoginDto) {
     return this.appService.login(user);
   }
 
   @UseGuards(RefreshTokenGuard)
-  @ApiSwagger({
-    operationId: 'refresh',
-  })
+  @ApiSwagger({ operationId: 'refresh' })
   @Post('/refresh')
   async refresh(@Req() req: any) {
     if (!req['user']) {
@@ -67,9 +59,7 @@ export class AppController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @ApiSwagger({
-    operationId: 'me',
-  })
+  @ApiSwagger({ operationId: 'me' })
   @ApiResponse({
     type: User,
   })

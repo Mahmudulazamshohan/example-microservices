@@ -22,11 +22,11 @@ const SharePost: FC = () => {
             <Box display={'flex'} gap={1}>
               <Avatar src="https://media.licdn.com/dms/image/D5603AQEm02djvZLyQw/profile-displayphoto-shrink_100_100/0/1707895378353?e=1729123200&v=beta&t=Nka-YlabpB2XchYXp3dGIp63JvrglkO1u8SaAiiUGUY" />
               <TextField
-                placeholder="Share a post, try writing with AI"
+                placeholder="Share a post, write someting here"
                 size="medium"
                 fullWidth
                 multiline
-                rows={3}
+                rows={2}
                 style={{ background: '#eee' }}
                 onClick={handleModal}
               />
