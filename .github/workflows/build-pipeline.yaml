@@ -1,10 +1,9 @@
-name: Build Docker Image
+name: Build Docker Images
 on:
   push:
     branches:
       - main
       - master
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,8 +30,7 @@ jobs:
           platforms: linux/amd64
           push: ${{ github.event_name == 'push' }}
           tags: |
-            your-dockerhub-username/your-repository-name:latest
-            your-dockerhub-username/your-repository-name:${{ github.sha }}
+             mahmudulazamshohan/authentication:${{ github.sha }}
 
       - name: Log out of Docker Hub
         if: github.event_name == 'push'
