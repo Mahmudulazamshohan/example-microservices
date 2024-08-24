@@ -6,10 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build:prod": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "webpack:serve": "webpack serve --mode development --live-reload --hot",
+    "webpack:prod": "webpack --mode production",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "start:dev": "concurrently \"npm run start:debug\" \"npm run webpack:serve\"",

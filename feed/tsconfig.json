@@ -27,6 +27,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    ".eslintrc.js"
+    ".eslintrc.js",
+    "webpack.config.ts"
   ]
 }

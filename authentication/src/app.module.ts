@@ -16,13 +16,18 @@ import { JwtStrategy } from './jwt.strategy';
 import { AppService } from './app.service';
 import { RefreshTokenStrategy } from './refreshtoken.strategy';
 import { CacheModule } from '@nestjs/cache-manager';
-console.log('PATH===>', path.join(__dirname, '.env'));
+import { ServeStaticModule } from '@nestjs/serve-static';
+
 @Module({
   imports: [
     LoggerModule.forRoot(loggerOptions),
     ConfigModule.forRoot({
       envFilePath: path.join(__dirname, '.env'),
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', 'dist/public'),
+      serveRoot: '/static',
     }),
     CacheModule.registerAsync({
       imports: [ConfigModule],

@@ -2,17 +2,28 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const webpack = require("webpack");
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 const { ModuleFederationPlugin } = webpack.container;
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const deps = require("./package.json").dependencies;
-require("dotenv").config({ path: path.join(__dirname, "./.env") });
 
 const buildDate = new Date().toLocaleString();
+
+require('dotenv').config({ silent: true });
 const enviroments = process?.env ?? {};
+
+console.log(enviroments);
+console.log('FEED_UI', JSON.stringify(process.env.FEED_UI));
 
 
 module.exports = (env: any, argv: { [key: string]: string }) => {
-  const isProduction = argv.mode === "production";
+  const isProduction: boolean = argv.mode === "production";
+  console.log(argv);
+  console.log({
+    feed: env?.FEED_UI,
+    authentication: env?.AUTHENTICATION_UI,
+  });
+
   let plugins: any[] = [];
 
   if (!isProduction) {
@@ -30,8 +41,8 @@ module.exports = (env: any, argv: { [key: string]: string }) => {
     new ModuleFederationPlugin({
       name: "container",
       remotes: {
-        feed: enviroments?.FEED_UI,
-        authentication: enviroments?.AUTHENTICATION_UI,
+        feed: env?.FEED_UI,
+        authentication: env?.AUTHENTICATION_UI,
       },
       shared: {
         ...deps,
@@ -61,11 +72,15 @@ module.exports = (env: any, argv: { [key: string]: string }) => {
     plugins.push(new ForkTsCheckerWebpackPlugin());
   }
 
+  plugins.push(new Dotenv({
+    path: isProduction ? '.env.prod' : '.env',
+  }));
+
   return {
     entry: path.join(__dirname, "./src/index.ts"),
-    mode: argv.mode || "development",
+    mode: argv?.mode || "development",
     devServer: {
-      port: 8003,
+      port: 4003,
       open: true,
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -82,9 +97,9 @@ module.exports = (env: any, argv: { [key: string]: string }) => {
       modules: ['./node_modules', 'node_modules'],
     },
     output: {
-      filename: '[name].js',
+      filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist'),
-      publicPath: 'http://localhost:8003/',
+      publicPath: 'http://localhost:4003/',
       clean: true,
     },
     module: {

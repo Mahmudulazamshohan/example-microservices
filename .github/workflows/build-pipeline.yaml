@@ -3,11 +3,9 @@ on:
   push:
     branches:
       - main
-      - master
 jobs:
-  build:
+  build-and-push-dockerhub:
     runs-on: ubuntu-latest
-  
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,16 +20,39 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
+      - name: Get shortened Git commit SHA
+        id: get_short_sha
+        run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
+  
+      - name: Build Docker image authentication and push
         uses: docker/build-push-action@v5
         with:
           context: ./authentication
           file: ./authentication/authentication.dockerfile
           platforms: linux/amd64
-          push: ${{ github.event_name == 'push' }}
+          push: true
           tags: |
-             mahmudulazamshohan/authentication:${{ github.sha }}
+             ${{ secrets.DOCKER_USERNAME }}/authentication:${{ github.ref_name }}-${{ env.SHORT_SHA }}
+  
+      - name:  Build Docker image feed and push
+        uses: docker/build-push-action@v5
+        with:
+           context: ./feed
+           file: ./feed/feed.dockerfile
+           platforms: linux/amd64
+           push: true
+           tags: |
+              ${{ secrets.DOCKER_USERNAME }}/feed:${{ github.ref_name }}-${{ env.SHORT_SHA }}
+
+      - name:  Build Docker image ui and push
+        uses: docker/build-push-action@v5
+        with:
+           context: ./ui
+           file: ./ui/ui.dockerfile
+           platforms: linux/amd64
+           push: true
+           tags: |
+                ${{ secrets.DOCKER_USERNAME }}/ui:${{ github.ref_name }}-${{ env.SHORT_SHA }}
 
       - name: Log out of Docker Hub
-        if: github.event_name == 'push'
         run: docker logout

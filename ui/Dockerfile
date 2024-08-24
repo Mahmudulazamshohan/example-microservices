@@ -9,6 +9,6 @@ RUN npm install -g nodemon
 
 COPY . .
 
-EXPOSE 4003 8003
+EXPOSE 4003
 
 CMD npm run start:dev

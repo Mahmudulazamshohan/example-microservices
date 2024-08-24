@@ -5,6 +5,7 @@
     "test",
     "dist",
     "**/*spec.ts",
-    "src/components"
+    "src/components",
+     "webpack.config.ts"
   ]
 }

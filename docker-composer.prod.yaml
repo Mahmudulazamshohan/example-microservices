@@ -12,6 +12,7 @@ services:
      - "db:/var/lib/mysql"
     networks:
       - example-microservices
+
   redis-cache:
     extends:
       file: ./common/common-services.yaml
@@ -20,24 +21,24 @@ services:
      - "redis_data:/data"
     networks:
       - example-microservices
+
   redis-commander:
     extends:
       file: ./common/common-services.yaml
       service: redis-commander
     networks:
       - example-microservices
+  
   authentication:
     build:
       context: ./authentication
-      dockerfile: Dockerfile
+      dockerfile: authentication.dockerfile
     image: authentication
     container_name: authentication
     ports:
       - "4001:4001"
-      - "8001:8001"
-    volumes:
-      - ./authentication:/authentication
-    env_file: ./authentication/.env
+    platform: linux/x86_64
+    env_file: ./authentication/.env.prod
     depends_on:
       - db
     networks:
@@ -46,31 +47,33 @@ services:
   feed:
     build:
       context: ./feed
-      dockerfile: Dockerfile
+      dockerfile: feed.dockerfile
     image: feed
     container_name: feed
     ports:
       - "4002:4002"
-      - "8002:8002"
-    volumes:
-      - ./feed:/feed
-    env_file: ./feed/.env
+    env_file: ./feed/.env.prod
+    platform: linux/x86_64
     depends_on:
       - db
+      - authentication
     networks:
       - example-microservices
 
   ui:
     build:
       context: ./ui
-      dockerfile: Dockerfile
+      dockerfile: ui.dockerfile
     image: ui
     container_name: ui
     ports:
       - "4003:4003"
-    volumes:
-      - ./ui:/ui
-    env_file: ./ui/.env
+    environment:
+      NODE_ENV: production
+      PORT: 4003
+      AUTHENTICATION_UI: "authentication@http://localhost:4001/static/remoteEntry.js"
+      FEED_UI: "feed@http://localhost:4002/static/remoteEntry.js"
+    platform: linux/x86_64
     depends_on:
       - authentication
       - feed

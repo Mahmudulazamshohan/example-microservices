@@ -52,18 +52,16 @@
 // app.listen(PORT, () => console.log(`Server started at ${PORT}`));
 
 
-
-
-import express from 'express';
-import path from 'path';
+import * as express from 'express';
+import * as path from 'path';
 
 const app = express();
+console.log('ENV', JSON.stringify(process?.env ?? {}));
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.get('*', (_, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+const port = process?.env?.PORT || 4003;
+
+app.listen(port, () => console.log(`Server running on port ${port}`));

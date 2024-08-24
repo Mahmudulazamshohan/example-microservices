@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   api-gateway:
     build:
@@ -7,11 +6,13 @@ services:
       dockerfile: nginx.dockerfile
     image: api-gateway
     container_name: api-gateway
+    platform: linux/x86_64
     ports:
       - "8080:8080"
     depends_on:
       - authentication
       - feed
+      - ui
     networks:
       - example-microservices
 
@@ -39,6 +40,7 @@ services:
   rabbitmq:
     image: rabbitmq:3.9.28-management-alpine
     container_name: rabbitmq
+    platform: linux/x86_64
     ports:
         - 5672:5672
         - 15672:15672
@@ -50,6 +52,7 @@ services:
 
   redis-cache:
     image: "redis:alpine"
+    platform: linux/x86_64
     ports:
       - "6379:6379"
     volumes:
@@ -59,6 +62,7 @@ services:
 
   redis-commander:
     container_name: redis-commander
+    platform: linux/x86_64
     hostname: redis-commander
     image: ghcr.io/joeferner/redis-commander:latest
     build: .
