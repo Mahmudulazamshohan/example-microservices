@@ -1,5 +1,4 @@
 import { HttpStatus } from '@nestjs/common';
-import type { Request, Response } from 'express';
 import type { Params } from 'nestjs-pino';
 import { multistream } from 'pino';
 
@@ -23,14 +22,16 @@ export const loggerOptions: Params = {
             },
           }),
       autoLogging: {
-        ignore: (req) => IGNORED_ROUTES.has((<Request>req).originalUrl),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ignore: (req) => IGNORED_ROUTES.has((<any>req).originalUrl),
       },
       formatters: {
         level: (label: string) => {
           return { level: label };
         },
       },
-      customLogLevel: function (_: Request, res: Response, err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      customLogLevel: function (res: any, _: unknown, err) {
         if (res.statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
           return 'error';
         } else if (res.statusCode >= HttpStatus.BAD_REQUEST || err) {
