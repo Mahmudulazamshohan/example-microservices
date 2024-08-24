@@ -1,30 +1,57 @@
 name: Build Docker Images
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build-and-push-dockerhub:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Docker Hub
-        if: github.event_name == 'push'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Set up Git
+        run: git fetch --depth=2 # Fetch at least two commits for comparison
 
       - name: Get shortened Git commit SHA
         id: get_short_sha
         run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
-  
-      - name: Build Docker image authentication and push
+
+      - name: Check if authentication folder has changed
+        id: check_authentication
+        run: |
+          if git diff --quiet HEAD^ HEAD ./authentication; then
+            echo "No changes in authentication folder."
+            echo "auth_changed=false" >> $GITHUB_ENV
+          else
+            echo "Changes detected in authentication folder."
+            echo "auth_changed=true" >> $GITHUB_ENV
+
+      - name: Check if feed folder has changed
+        id: check_feed
+        run: |
+          if git diff --quiet HEAD^ HEAD ./feed; then
+            echo "No changes in feed folder."
+            echo "feed_changed=false" >> $GITHUB_ENV
+          else
+            echo "Changes detected in feed folder."
+            echo "feed_changed=true" >> $GITHUB_ENV
+
+      - name: Check if ui folder has changed
+        id: check_ui
+        run: |
+          if git diff --quiet HEAD^ HEAD ./ui; then
+            echo "No changes in ui folder."
+            echo "ui_changed=false" >> $GITHUB_ENV
+          else
+            echo "Changes detected in ui folder."
+            echo "ui_changed=true" >> $GITHUB_ENV
+
+      - name: Build and push Docker image for authentication
+        if: env.auth_changed == 'true'
         uses: docker/build-push-action@v5
         with:
           context: ./authentication
@@ -32,27 +59,29 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-             ${{ secrets.DOCKER_USERNAME }}/authentication:${{ github.ref_name }}-${{ env.SHORT_SHA }}
-  
-      - name:  Build Docker image feed and push
-        uses: docker/build-push-action@v5
-        with:
-           context: ./feed
-           file: ./feed/feed.dockerfile
-           platforms: linux/amd64
-           push: true
-           tags: |
-              ${{ secrets.DOCKER_USERNAME }}/feed:${{ github.ref_name }}-${{ env.SHORT_SHA }}
+            ${{ secrets.DOCKER_USERNAME }}/authentication:${{ github.ref_name }}-${{ env.SHORT_SHA }}
 
-      - name:  Build Docker image ui and push
+      - name: Build and push Docker image for feed
+        if: env.feed_changed == 'true'
         uses: docker/build-push-action@v5
         with:
-           context: ./ui
-           file: ./ui/ui.dockerfile
-           platforms: linux/amd64
-           push: true
-           tags: |
-                ${{ secrets.DOCKER_USERNAME }}/ui:${{ github.ref_name }}-${{ env.SHORT_SHA }}
+          context: ./feed
+          file: ./feed/feed.dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/feed:${{ github.ref_name }}-${{ env.SHORT_SHA }}
+
+      - name: Build and push Docker image for ui
+        # if: env.ui_changed == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ui
+          file: ./ui/ui.dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/ui:${{ github.ref_name }}-${{ env.SHORT_SHA }}
 
       - name: Log out of Docker Hub
         run: docker logout

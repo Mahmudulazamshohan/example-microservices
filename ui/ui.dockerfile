@@ -3,6 +3,7 @@ WORKDIR /ui
 COPY package*.json ./
 RUN npm install --omit=dev
 COPY . .
+RUN npm install --save-dev webpack
 RUN npm run build:webpack
 RUN npm run build:prod
 
