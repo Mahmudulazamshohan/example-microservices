@@ -1,12 +1,4 @@
-import { Controller, Get, Res } from '@nestjs/common';
-import { type Response } from 'express';
+import { Controller } from '@nestjs/common';
 
 @Controller()
-export class AppController {
-  @Get('/')
-  getJs(@Res() res: Response) {
-    res.json({
-      success: false,
-    });
-  }
-}
+export class AppController {}
