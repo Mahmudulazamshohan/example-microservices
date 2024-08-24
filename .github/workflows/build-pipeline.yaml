@@ -20,38 +20,38 @@ jobs:
         id: get_short_sha
         run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
 
-      - name: Check if authentication folder has changed
-        id: check_authentication
-        run: |
-          if git diff --quiet HEAD^ HEAD ./authentication; then
-            echo "No changes in authentication folder."
-            echo "auth_changed=false" >> $GITHUB_ENV
-          else
-            echo "Changes detected in authentication folder."
-            echo "auth_changed=true" >> $GITHUB_ENV
+      # - name: Check if authentication folder has changed
+      #   id: check_authentication
+      #   run: |
+      #     if git diff --quiet HEAD^ HEAD ./authentication; then
+      #       echo "No changes in authentication folder."
+      #       echo "auth_changed=false" >> $GITHUB_ENV
+      #     else
+      #       echo "Changes detected in authentication folder."
+      #       echo "auth_changed=true" >> $GITHUB_ENV
 
-      - name: Check if feed folder has changed
-        id: check_feed
-        run: |
-          if git diff --quiet HEAD^ HEAD ./feed; then
-            echo "No changes in feed folder."
-            echo "feed_changed=false" >> $GITHUB_ENV
-          else
-            echo "Changes detected in feed folder."
-            echo "feed_changed=true" >> $GITHUB_ENV
+      # - name: Check if feed folder has changed
+      #   id: check_feed
+      #   run: |
+      #     if git diff --quiet HEAD^ HEAD ./feed; then
+      #       echo "No changes in feed folder."
+      #       echo "feed_changed=false" >> $GITHUB_ENV
+      #     else
+      #       echo "Changes detected in feed folder."
+      #       echo "feed_changed=true" >> $GITHUB_ENV
 
-      - name: Check if ui folder has changed
-        id: check_ui
-        run: |
-          if git diff --quiet HEAD^ HEAD ./ui; then
-            echo "No changes in ui folder."
-            echo "ui_changed=false" >> $GITHUB_ENV
-          else
-            echo "Changes detected in ui folder."
-            echo "ui_changed=true" >> $GITHUB_ENV
+      # - name: Check if ui folder has changed
+      #   id: check_ui
+      #   run: |
+      #     if git diff --quiet HEAD^ HEAD ./ui; then
+      #       echo "No changes in ui folder."
+      #       echo "ui_changed=false" >> $GITHUB_ENV
+      #     else
+      #       echo "Changes detected in ui folder."
+      #       echo "ui_changed=true" >> $GITHUB_ENV
 
       - name: Build and push Docker image for authentication
-        if: env.auth_changed == 'true'
+        # if: env.auth_changed == 'true'
         uses: docker/build-push-action@v5
         with:
           context: ./authentication
@@ -62,7 +62,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/authentication:${{ github.ref_name }}-${{ env.SHORT_SHA }}
 
       - name: Build and push Docker image for feed
-        if: env.feed_changed == 'true'
+        # if: env.feed_changed == 'true'
         uses: docker/build-push-action@v5
         with:
           context: ./feed
