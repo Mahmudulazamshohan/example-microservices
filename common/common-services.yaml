@@ -16,7 +16,7 @@ services:
     networks:
       - example-microservices
 
-  db:
+  authentication-db:
     platform: linux/x86_64
     image: mysql:8.0
     ulimits:
@@ -28,12 +28,31 @@ services:
       MYSQL_DATABASE: authentication
       MYSQL_USER: user123456
       MYSQL_PASSWORD: 123456
-      MYSQL_ROOT_HOST: '%'
     volumes:
-      - "db:/var/lib/mysql"
+      - "authentication-db:/var/lib/mysql"
     command: --default-authentication-plugin=mysql_native_password
     ports:
       - "3306:3306"
+    networks:
+      - example-microservices
+
+  feed-db:
+    platform: linux/x86_64
+    image: mysql:8.0
+    ulimits:
+      nofile:
+        soft: 20000
+        hard: 40000
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: feed
+      MYSQL_USER: user123456
+      MYSQL_PASSWORD: 123456
+    volumes:
+      - "feed-db:/var/lib/mysql"
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3307:3306"
     networks:
       - example-microservices
 

@@ -9,9 +9,5 @@ export class Post {
 
   @Column({ type: 'text' })
   @IsString()
-  public username: string;
-
-  @Column({ type: 'varchar' })
-  @IsString()
-  public password: string;
+  public content: string;
 }

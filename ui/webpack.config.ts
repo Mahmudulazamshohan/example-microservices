@@ -1,4 +1,6 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+// @ts-nocheck
+/* eslint-disable */
+const HtmlWebpackPlugin = require("html-webpack-plugin"); /* eslint-disable */
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const webpack = require("webpack");
 const path = require('path');
@@ -12,37 +14,22 @@ const buildDate = new Date().toLocaleString();
 require('dotenv').config({ silent: true });
 const enviroments = process?.env ?? {};
 
-console.log(enviroments);
-console.log('FEED_UI', JSON.stringify(process.env.FEED_UI));
-
-
 module.exports = (env: any, argv: { [key: string]: string }) => {
   const isProduction: boolean = argv.mode === "production";
-  console.log(argv);
-  console.log({
-    feed: env?.FEED_UI,
-    authentication: env?.AUTHENTICATION_UI,
-  });
-
   let plugins: any[] = [];
 
   if (!isProduction) {
-    plugins.push(new ReactRefreshWebpackPlugin({
-      overlay: false,
-    }));
+    plugins.push(new ReactRefreshWebpackPlugin({ overlay: false }));
   }
 
   plugins = [
     ...plugins,
     new webpack.EnvironmentPlugin({ BUILD_DATE: buildDate }),
-    new webpack.DefinePlugin({
-      "process.env": JSON.stringify(enviroments),
-    }),
     new ModuleFederationPlugin({
       name: "container",
       remotes: {
-        feed: env?.FEED_UI,
-        authentication: env?.AUTHENTICATION_UI,
+        feed: enviroments?.FEED_UI,
+        authentication: enviroments?.AUTHENTICATION_UI,
       },
       shared: {
         ...deps,
@@ -68,13 +55,10 @@ module.exports = (env: any, argv: { [key: string]: string }) => {
       template: path.join(__dirname, "./public/index.html"),
     }),
   ];
+
   if(!isProduction){
     plugins.push(new ForkTsCheckerWebpackPlugin());
   }
-
-  plugins.push(new Dotenv({
-    path: isProduction ? '.env.prod' : '.env',
-  }));
 
   return {
     entry: path.join(__dirname, "./src/index.ts"),

@@ -15,7 +15,6 @@ import { AppController } from './app.controller';
     }),
     LoggerModule.forRoot(loggerOptions),
     ConfigModule.forRoot({
-      envFilePath: '.env',
       isGlobal: true,
     }),
   ],

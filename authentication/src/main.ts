@@ -24,6 +24,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   // Save the Swagger document as a JSON file
   await writeFileSync(
