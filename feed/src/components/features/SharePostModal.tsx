@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -40,7 +39,6 @@ const modalSx: SxProps<Theme> = {
 };
 
 const SharePostModal: React.FC<SharePostModalProps> = ({ open, onClose }) => {
-
   return (
     <Modal
       open={open}

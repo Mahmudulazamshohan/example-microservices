@@ -5,7 +5,7 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 
-const API_URL = '/v1/auth';
+const API_URL = '/api/authentication';
 
 export interface LoginData {
   username: string;

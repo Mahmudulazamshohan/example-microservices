@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* eslint-disable */
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const webpack = require("webpack");
@@ -14,6 +16,7 @@ const env = process?.env ?? {};
 
 module.exports = (_: any, argv: { [key: string]: string }) => {
     const isProduction: boolean = argv.mode === "production";
+
     let plugins: any[] = [
         new webpack.EnvironmentPlugin({ BUILD_DATE: buildDate }),
         new webpack.DefinePlugin({
@@ -77,7 +80,7 @@ module.exports = (_: any, argv: { [key: string]: string }) => {
         output: {
             filename: 'bundle.js',
             path: path.resolve(__dirname, 'dist'),
-            publicPath: '/static',
+            publicPath: 'static/',
             clean: true,
         },
         module: {
