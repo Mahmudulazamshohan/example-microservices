@@ -20,20 +20,14 @@ spec:
         - name: {{ .Values.appName }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: {{ .Values.containerPort }}
+            - containerPort: {{ .Values.PORT }}
           env:
-           - name: MYSQL_HOST
-             value: "{{ .Values.MYSQL_HOST }}"
-           - name: MYSQL_PORT
-             value: "{{ .Values.MYSQL_PORT }}"
-           - name: MYSQL_USER
-             value: "{{ .Values.MYSQL_USER }}"
-           - name: MYSQL_PASS
-             value: "{{ .Values.MYSQL_PASS }}"
-           - name: MYSQL_NAME
-             value: "{{ .Values.MYSQL_NAME }}"
            - name: PORT
-             value: "{{ .Values.containerPort }}"
+             value: "{{ .Values.PORT }}"
+           - name: AUTHENTICATION_UI
+             value: "{{ .Values.AUTHENTICATION_UI }}"
+           - name: FEED_UI
+             value: "{{ .Values.FEED_UI }}"
           resources:
             requests:
               memory: "{{ .Values.resources.requests.memory }}"

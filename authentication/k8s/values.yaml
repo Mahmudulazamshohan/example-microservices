@@ -9,6 +9,7 @@ image:
 PORT: 4001
 servicePort: 81
 protocalType: http
+NODE_ENV: production
 
 configMap:
   name: example-configmap-v2

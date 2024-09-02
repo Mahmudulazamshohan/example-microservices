@@ -3,15 +3,14 @@ appName: feed
 replicaCount: 1
 
 image:
-  repository: mahmudulazamshohan/authentication
-  tag: "2.5"
+  repository: mahmudulazamshohan/feed
+  tag: "main-abc35b1"
 
-containerPort: 4002
+PORT: 4002
 servicePort: 82
 protocalType: http
 
-configMap:
-  name: example-configmap-v2
+NODE_ENV: production
 
 serviceType: NodePort
 
@@ -25,8 +24,26 @@ resources:
     cpu: 100m
     memory: 256Mi
 
-MYSQL_HOST: db
+mysql:
+  enabled: true
+  auth:
+    username: "user123456"
+    password: "123456"
+    database: "feed"
+    rootPassword: "feed"
+  primary:
+    persistence:
+      enabled: false
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+MYSQL_HOST: feed-mysql
 MYSQL_PORT: 3306
-MYSQL_USER: root
+MYSQL_USER: user123456
 MYSQL_PASS: 123456
-MYSQL_NAME: example_db
+MYSQL_NAME: feed

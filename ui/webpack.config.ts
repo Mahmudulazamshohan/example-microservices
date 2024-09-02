@@ -83,7 +83,7 @@ module.exports = (env: any, argv: { [key: string]: string }) => {
     output: {
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist'),
-      publicPath: 'http://localhost:4003/',
+      publicPath: 'http://localhost:4003/static',
       clean: true,
     },
     module: {

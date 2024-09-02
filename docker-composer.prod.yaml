@@ -4,12 +4,21 @@ networks:
     driver: bridge
 services:
 
-  db:
+  authentication-db:
     extends:
       file: ./common/common-services.yaml
-      service: db
+      service: authentication-db
     volumes:
-     - "db:/var/lib/mysql"
+     - "authentication-db:/var/lib/mysql"
+    networks:
+      - example-microservices
+
+  feed-db:
+    extends:
+      file: ./common/common-services.yaml
+      service: feed-db
+    volumes:
+     - "feed-db:/var/lib/mysql"
     networks:
       - example-microservices
 
@@ -38,9 +47,61 @@ services:
     ports:
       - "4001:4001"
     platform: linux/x86_64
-    env_file: ./authentication/.env.prod
+    environment:
+      PORT: 4001
+      NODE_ENV: production
+      MYSQL_HOST: authentication-db
+      MYSQL_PORT: 3306
+      MYSQL_USER: user123456
+      MYSQL_PASS: 123456
+      MYSQL_NAME: authentication
+      PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----
+        MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDTcdCmp4jk6X4t
+        0HenZLx5D3DXNFgC34BRFv0lSiB4JmRII9Moiatvdz/StvehrX7kLDCcoPLO7JPH
+        SD58TReZyo8Ad5uUMNQ5nskUQ1j8l1QnDwo6A+NoLjLx13E7FpZkwDpzgOQJ5Xm5
+        ZEaLy/Fb5CsAM7ApqQ6lXgkg7dvW8N+cObA4fcw2XCZoI84/vAi+0JELRaWurAr6
+        4mKroULmgnTo/JDhPMTZHgfIstB6nCWrFfsCKGcUZe6q5P2eaz5Yapf/uI6/2YPM
+        rvI21Zm/lEVIWw8YNGuZXdRKLWsJDDlASqpJEKMjYKc4+hxXRbPg9vBiRYSF+tqk
+        Ivxs4wEVAgMBAAECggEAC00SPJIIPknfgVXay1LWQvcpDguBZ7fn3Q2oPom5dgqB
+        QhzOEKTZCZZbTikSz6yc81eMSpbMm3QoCtbo5g5dxE2/+mOqKE+6zBCZSTC3TRrO
+        d971Kjgie6M6fFQKPID+zUg754f8SC4gZSD/p0GhdwqZJMPedr+PJZYC0WR9Iz34
+        JYBT0l/MZ/BFlHY233HkkpQN0ngFUi9+4ZBu9mYcUQWop2RgXvkYUTxR9rGPrhCw
+        +ixFpG2/sv6BWJhmLwaRxIejM2rIJOkoMCKePHLRCltkRvRFIE00+PhtvLz3i5JW
+        rU2Jz1jUt+1NzGBnLNfHNCNYaVuSydw1xdapx7/3WQKBgQDyZqr9VkEmjbqqmJBX
+        Zz+PzYw+CSaz63/J78WzSEa7UAA59X7ny3fNHMQrlKbb7/DL9UiS/GjAjc2v0wy7
+        H0rnDZ+TK/DUy7Q4hvyYdk3th2AMb4kmtABRunBX45JlpIuZ9tN4JosmlqPN6OA6
+        MmEaenS9MjH/fngpF3jkQgcUfQKBgQDfTo32aw/0AdrovvIj5nsee6nGK8XVAafy
+        QMCFvd1WOi9yutjxeAkGjETevfUEAh5dk0mu7+wdFtBZqHxaSpiQN+z37HdPRXxs
+        RGngpQcZFfyYIAUd1HToZbRWEtWwHgnNvZ6B7ysqmiWxFZ44ExmeinHcmm9XPwTe
+        BLZBI146eQKBgQCDAA1EoErRZSMOcyj+s2PceX9jP1rVPV5wac50V4kyTcfxisUs
+        y/9QsE0sKEgM8J03/LVeCl8qQPh6HxrwPbcjK2+j/8lFl1kse3cjhjwTNGgqEFUU
+        v460nId+WBSULdrsOEKM2ne1QRABhes4SGXGA4v3e5sdsuGJg4/n++8LmQKBgQCx
+        2ln9ClZhbFzTBMnMSBSFOc8FM/XT6ga+Tk5H9uljdOI3iZOh9o2RtoRft4F+2MUg
+        mF+WQiaXIIV+809fhowuSSymZaK880Xe4TpGnomhtD5DVzVcBcu7EM3pxASHydTb
+        FYw6RqflvXIJsYMbfDLqb6+yGRpWra2NuskB5k51WQKBgARPffhXc6XuzT8Sw7Ef
+        yc6nyQstMUQ2N3gGuDiVpxNxL5JNSqIwD+h/XFLkPxTI14fPusGoXSPaI4xXsOub
+        4AGCAV6+U3DsFOMcSruiuizhwfY+ByX5TUbj7n5AjhTrTaURBNc8Rda4IZ9SdKn0
+        Z984V4coGTj5nAOLSlerYlAV
+        -----END PRIVATE KEY-----"
+      PUBLIC_KEY: "-----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA03HQpqeI5Ol+LdB3p2S8
+        eQ9w1zRYAt+AURb9JUogeCZkSCPTKImrb3c/0rb3oa1+5CwwnKDyzuyTx0g+fE0X
+        mcqPAHeblDDUOZ7JFENY/JdUJw8KOgPjaC4y8ddxOxaWZMA6c4DkCeV5uWRGi8vx
+        W+QrADOwKakOpV4JIO3b1vDfnDmwOH3MNlwmaCPOP7wIvtCRC0WlrqwK+uJiq6FC
+        5oJ06PyQ4TzE2R4HyLLQepwlqxX7AihnFGXuquT9nms+WGqX/7iOv9mDzK7yNtWZ
+        v5RFSFsPGDRrmV3USi1rCQw5QEqqSRCjI2CnOPocV0Wz4PbwYkWEhfrapCL8bOMB
+        FQIDAQAB
+        -----END PUBLIC KEY-----"
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      REDIS_TTL: 600
+      REDIS_USERNAME: "redis-master"
+      REDIS_PASSWORD: "123456"
+      JWT_SECRET: "secret123456"
+      REFRESH_JWT_SECRET: "secret123456"
+      EXPIRES_IN: "5m"
     depends_on:
-      - db
+      - authentication-db
     networks:
       - example-microservices
 
@@ -52,10 +113,19 @@ services:
     container_name: feed
     ports:
       - "4002:4002"
-    env_file: ./feed/.env.prod
+    environment:
+      PORT: 4002
+      MYSQL_HOST: feed-db
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASS: 123456
+      MYSQL_NAME: feed
+      AUTHENTICATION_UI: "authentication@http://localhost:8001/remoteEntry.js"
+      FEED_UI: "feed@http://localhost:8002/remoteEntry.js"
+      NODE_ENV: production
     platform: linux/x86_64
     depends_on:
-      - db
+      - feed-db
       - authentication
     networks:
       - example-microservices
@@ -84,11 +154,18 @@ services:
     extends:
       file: ./common/common-services.yaml
       service: api-gateway
+    depends_on:
+      - authentication
+      - feed
+      - ui
     networks:
       - example-microservices
         
 volumes:
   redis_data:
-  db:
+  authentication-db:
+    driver:
+      local
+  feed-db:
     driver:
       local

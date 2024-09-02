@@ -67,7 +67,7 @@ const logger: any = pinoHttp({
 });
 
 app.use(logger);
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use('/static', express.static(path.join(__dirname, 'dist')));
 
 app.get('*', (_, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));
 
