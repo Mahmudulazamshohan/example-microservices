@@ -26,14 +26,12 @@ spec:
     spec:
       restartPolicy: OnFailure
       {{- if .Values.image.imagePullSecrets }}
-      imagePullSecrets:
-{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+      imagePullSecrets: {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
       containers:
       - name: db-migrations-job
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        # command: ["node ./node_modules/typeorm/cli.js -d ./dist/config/data-source.js", "migration:run"]
-        # command: ["cd","dist"]
+        command: ["npm","run","migration:run"]
         command: ["ls"]
         env:
           - name: MYSQL_HOST

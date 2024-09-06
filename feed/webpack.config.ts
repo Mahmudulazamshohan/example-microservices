@@ -31,7 +31,7 @@ module.exports = (env: unknown, argv: { [key: string]: string }) => {
     output: {
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist/public'),
-      publicPath: isProduction  ? 'http://localhost:4002/static/' : 'http://localhost:8002/',
+      publicPath: isProduction  ? 'http://localhost/api/feed/static/bundle.js' : 'http://localhost:8002/',
     },
     module: {
       rules: [
