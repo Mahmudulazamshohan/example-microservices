@@ -7,7 +7,6 @@ COPY . .
 RUN npm run build:prod
 RUN npm uninstall -g @nestjs/cli
 
-
 FROM node:20-alpine AS ui-builder
 WORKDIR /ui
 COPY package*.json ./

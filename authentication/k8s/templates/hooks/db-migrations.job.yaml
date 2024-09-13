@@ -32,7 +32,6 @@ spec:
       - name: db-migrations-job
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         command: ["npm","run","migration:run"]
-        command: ["ls"]
         env:
           - name: MYSQL_HOST
             value: "{{ .Values.MYSQL_HOST }}"
