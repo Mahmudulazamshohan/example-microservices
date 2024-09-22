@@ -12,7 +12,9 @@ const WithNavbar: React.FC<WithNavbarProps> = ({ children }) => {
     return (
         <Box>
             <Header />
-            {children}
+            <Box sx={{ marginTop: '60px' }}>
+                {children}
+            </Box>
         </Box>
     );
 };

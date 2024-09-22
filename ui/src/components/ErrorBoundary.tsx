@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Alert } from '@mui/material';
-
+import { Box, Typography, Button, Container, Alert } from '@mui/material';
 
 interface ErrorBoundaryProps {
     children: JSX.Element;
@@ -10,7 +9,6 @@ interface ErrorBoundaryProps {
 interface ErrorBoundaryState {
     hasError: boolean;
     message?: string;
-
 };
 
 export default class ErrorBoundary
@@ -24,16 +22,40 @@ export default class ErrorBoundary
     static getDerivedStateFromError(error: any) {
         return {
             hasError: true,
-            message: error,
+            message: error?.message || '',
         };
     }
 
     render() {
         if (this.state.hasError) {
             return (
-                <Alert variant="filled" severity="error">
-                    {this.props?.serviceName ? `Something went wrong with ${this.props?.serviceName}` : 'Something went wrong.'}
-                </Alert>
+                <Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '80vh',
+                        }}
+                    >
+                        <Typography variant="h4" component="h1" gutterBottom>
+                            Oops!
+                        </Typography>
+                        <Typography variant="h6" color="textSecondary">
+                            Something went wrong. Please try again later.
+                        </Typography>
+                        <Box mt={4}>
+                            <Button variant="outlined" color="primary" onClick={() => window.location.reload()}>
+                                Retry
+                            </Button>
+                        </Box>
+                        {this.state?.hasError && (
+                            <Alert style={{ marginTop: 10 }} variant="filled" severity="error">{this.state.message}</Alert>
+                        )}
+                      
+                    </Box>
+                </Container>
             );
         }
 

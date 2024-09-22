@@ -1,8 +1,8 @@
 import { runSeeders, SeederOptions } from 'typeorm-extension';
-import { mysqlConfig } from '../config/data-source';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import UserSeeder from './user.seeder';
-import UserFactory from './user.factory';
+import UserSeeder from './user/user.seeder';
+import UserFactory from './user/user.factory';
+import { mysqlConfig } from '../config/data-source';
 
 (async () => {
   const options: DataSourceOptions & SeederOptions = {

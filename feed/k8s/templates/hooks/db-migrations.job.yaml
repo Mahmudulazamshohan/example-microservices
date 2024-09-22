@@ -15,7 +15,7 @@ metadata:
     "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
     "helm.sh/hook-weight": "-5"
 spec:
-  suspend: true
+  suspend: false
   activeDeadlineSeconds: 300
   template:
     metadata:
@@ -26,14 +26,12 @@ spec:
     spec:
       restartPolicy: OnFailure
       {{- if .Values.image.imagePullSecrets }}
-      imagePullSecrets:
-{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+      imagePullSecrets: {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
       containers:
       - name: db-migrations-job
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        # command: ["node ./node_modules/typeorm/cli.js -d ./dist/config/data-source.js", "migration:run"]
-        # command: ["node", "-v"]
+        command: ["npm","run","migration:run"]
         env:
           - name: MYSQL_HOST
             value: "{{ .Values.MYSQL_HOST }}"
@@ -47,6 +45,8 @@ spec:
             value: "{{ .Values.MYSQL_NAME }}"
           - name: NODE_ENV
             value: "{{.Values.NODE_ENV}}"
+          - name: PORT
+            value: "{{.Values.PORT}}"
         resources:
           requests:
             memory: "{{ .Values.resources.requests.memory }}"

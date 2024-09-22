@@ -24,7 +24,7 @@ export class AppService {
     password: string,
     isRefreshToken = false,
   ): Promise<User> {
-    const user = await this.usersService.findOne({ username });
+    const user = await this.usersService.findOne({ where: { username } });
 
     if (!user) {
       throw new BadRequestException('User not found');
@@ -46,10 +46,7 @@ export class AppService {
     return null;
   }
 
-  async login(
-    user: { username: string; password: string },
-    isRefreshToken = false,
-  ) {
+  async login(user, isRefreshToken = false) {
     const payload = await this.validateUser(
       user.username,
       user.password,
@@ -82,7 +79,7 @@ export class AppService {
   async refresh(payload: { username: string; hashedRt: string }) {
     try {
       const user = await this.usersService.findOne({
-        username: payload.username,
+        where: { username: payload.username },
       });
 
       const data = await this.login(user, true);

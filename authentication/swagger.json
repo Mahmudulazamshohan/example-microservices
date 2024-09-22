@@ -6,10 +6,65 @@
         "operationId": "signup",
         "summary": "signup",
         "description": "Default description",
-        "parameters": [],
+        "query": {},
+        "response": {
+          "isArray": false,
+          "description": ""
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "firstname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupDto"
+              }
+            }
+          }
+        },
         "responses": {
-          "201": {
-            "description": ""
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -22,6 +77,11 @@
         "operationId": "login",
         "summary": "login",
         "description": "Default description",
+        "query": {},
+        "response": {
+          "isArray": false,
+          "description": ""
+        },
         "parameters": [
           {
             "description": "Username of user",
@@ -53,8 +113,15 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -67,32 +134,10 @@
         "operationId": "refresh",
         "summary": "refresh",
         "description": "Default description",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Access token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": ""
-          }
+        "response": {
+          "isArray": false,
+          "description": ""
         },
-        "tags": [
-          "authentication"
-        ]
-      }
-    },
-    "/me": {
-      "get": {
-        "operationId": "me",
-        "summary": "me",
-        "description": "Default description",
         "parameters": [
           {
             "name": "Authorization",
@@ -110,10 +155,61 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
+          }
+        },
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/me": {
+      "get": {
+        "operationId": "me",
+        "summary": "me",
+        "description": "Default description",
+        "response": {
+          "isArray": false,
+          "description": ""
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Access token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/swagger.json": {
+      "get": {
+        "operationId": "AppController_swagger",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -152,7 +248,11 @@
     "contact": {}
   },
   "tags": [],
-  "servers": [],
+  "servers": [
+    {
+      "url": "http://localhost/api/authentication"
+    }
+  ],
   "components": {
     "securitySchemes": {
       "bearer": {
@@ -162,6 +262,61 @@
       }
     },
     "schemas": {
+      "SignupDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "firstname",
+          "lastname"
+        ]
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "description": "Metadata related to the response"
+          },
+          "data": {
+            "type": "object",
+            "description": "The actual data of the response"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the response"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message describing the response"
+          },
+          "errors": {
+            "description": "List of errors if any",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "status",
+          "message"
+        ]
+      },
       "LoginDto": {
         "type": "object",
         "properties": {
@@ -178,45 +333,11 @@
           "username",
           "password"
         ]
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "user_id": {
-            "type": "int"
-          },
-          "username": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "hashed_rt": {
-            "type": "string"
-          },
-          "is_active": {
-            "type": "boolean"
-          },
-          "firstname": {
-            "type": "string"
-          },
-          "lastname": {
-            "type": "string"
-          },
-          "profile_picture_url": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "user_id",
-          "username",
-          "password",
-          "hashed_rt",
-          "is_active",
-          "firstname",
-          "lastname"
-        ]
       }
     }
+  },
+  "externalDocs": {
+    "description": "More Information",
+    "url": "https://www.google.com"
   }
 }

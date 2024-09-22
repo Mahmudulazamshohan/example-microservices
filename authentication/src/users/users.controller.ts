@@ -4,13 +4,13 @@ import { ApiSwagger } from '../decorators/api-operation.decorator';
 
 @Controller('/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('/profile')
   @ApiSwagger({
-    operationId: 'getUserProfile',
+    operationId: 'getProfile',
   })
-  findAll() {
+  getProfile() {
     return this.usersService.findAll();
   }
 }

@@ -29,20 +29,6 @@ export class Profile {
   @Column({ nullable: true })
   website_url: string;
 
-  //   @CreateDateColumn({
-  //     type: 'timestamp',
-  //     nullable: true,
-  //     default: () => 'CURRENT_TIMESTAMP',
-  //   })
-  //   created_at: Date;
-
-  //   @UpdateDateColumn({
-  //     type: 'timestamp',
-  //     nullable: true,
-  //     default: () => 'CURRENT_TIMESTAMP',
-  //   })
-  //   updated_at: Date;
-
   @OneToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;

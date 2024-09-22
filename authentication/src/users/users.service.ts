@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../entities/User';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -12,8 +12,8 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return createUserDto;
+  async create(createUserDto: CreateUserDto) {
+    return this.userRepository.create(createUserDto);
   }
 
   findAll() {
@@ -22,11 +22,13 @@ export class UsersService {
     };
   }
 
-  async findOne(where: unknown): Promise<User> {
-    return this.userRepository.findOne({ where });
+  async findOne(options: FindOneOptions): Promise<User> {
+    return this.userRepository.findOne(options);
   }
 
-  save() {}
+  async save(user: User) {
+    return this.userRepository.save(user);
+  }
 
   async updateRefreshToken(
     userId: number,
@@ -37,16 +39,9 @@ export class UsersService {
     return hashedRt;
   }
 
-  async updateLastLogin(payload: { username: string }) {
+  async updateLastLogin(payload) {
+    const { username = '' } = payload;
     const lastLogin = new Date();
-    const user = await this.userRepository.update(
-      {
-        username: payload.username,
-      },
-      {
-        last_login: lastLogin,
-      },
-    );
-    return user;
+    return this.userRepository.update({ username }, { last_login: lastLogin });
   }
 }

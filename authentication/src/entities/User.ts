@@ -33,7 +33,7 @@ export class User {
   public hashed_rt: string;
 
   @ApiProperty({ type: 'boolean' })
-  @Column({ default: true })
+  @Column({ default: false })
   is_active: boolean;
 
   @ApiProperty({ type: 'string' })
@@ -50,18 +50,6 @@ export class User {
   @Column({ type: 'varchar', length: 300, nullable: true })
   @IsString()
   public profile_picture_url: string | null;
-
-  // @CreateDateColumn({
-  //   type: 'timestamp',
-  //   nullable: true,
-  // })
-  // created_at: Date;
-
-  // @UpdateDateColumn({
-  //   type: 'timestamp',
-  //   nullable: true,
-  // })
-  // updated_at: Date;
 
   @Column({ type: 'datetime', nullable: true })
   last_login: Date;

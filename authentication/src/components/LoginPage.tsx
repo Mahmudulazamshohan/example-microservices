@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
   Box,
   Button,
   Checkbox,
-  CircularProgress,
   Container,
   CssBaseline,
   FormControlLabel,
@@ -20,7 +19,7 @@ import { useAuth } from './query/useAuth';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login, isLoading } = useAuth();
+  const { login, user } = useAuth();
 
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -33,14 +32,17 @@ const LoginPage: React.FC = () => {
         { username, password },
         {
           onSuccess: () => navigate('/'),
-          onError: (err: any) => {
-            console.log(err.response);
-          },
+          onError: console.error,
         },
       );
     },
     [username, password],
   );
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -53,7 +55,7 @@ const LoginPage: React.FC = () => {
           alignItems: 'center',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
           <LockClockOutlined />
         </Avatar>
         <Typography component="h1" variant="h5">
@@ -97,7 +99,7 @@ const LoginPage: React.FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Log In
           </Button>
           <Grid container>
             <Grid item xs>

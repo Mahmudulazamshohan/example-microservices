@@ -4,20 +4,21 @@ import { createBrowserRouter } from "react-router-dom";
 import { Suspense } from "react";
 
 import AuthWrapper from './AuthWrapper';
-import Header from './components/Header';
-import { Box, Card, Grid } from '@mui/material';
 import MainPage from './pages/MainPage';
+import ErrorBoundary from './components/ErrorBoundary';
+import NotFoundPage from './pages/NotFoundPage';
 
-
-const CounterAppOne = React.lazy(() => import("feed/CounterAppOne"));
-const SharePost = React.lazy(() => import("feed/features/SharePost"));
-const FeedSection = React.lazy(() => import("feed/sections/FeedSection"));
 const LoginPage = React.lazy(() => import("authentication/LoginPage"));
+const SignupPage = React.lazy(() => import("authentication/SignupPage"));
 
 const routers = createBrowserRouter([
     {
         path: '/',
-        element: <AuthWrapper />,
+        element: (
+            <ErrorBoundary>
+                <AuthWrapper />
+            </ErrorBoundary>
+        ),
         children: [
             {
                 path: '',
@@ -33,10 +34,19 @@ const routers = createBrowserRouter([
                 <LoginPage />
             </Suspense>
         ),
+    },{
+        path: 'signup',
+        element: (
+            <Suspense>
+                <ErrorBoundary>
+                    <SignupPage />
+                </ErrorBoundary>
+            </Suspense>
+        ),
     },
     {
         path: '*',
-        element: <p>Not found</p>
+        element: <NotFoundPage />
     }
 ]);
 

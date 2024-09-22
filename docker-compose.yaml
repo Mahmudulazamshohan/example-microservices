@@ -57,6 +57,8 @@ services:
       - "8001:8001"
     volumes:
       - ./authentication:/authentication
+    env_file:
+      - ./authentication/.env
     environment:
       PORT: 4001
       MYSQL_HOST: authentication-db
@@ -73,8 +75,6 @@ services:
       REFRESH_JWT_SECRET: secret123456
       EXPIRES_IN: 5m
       REFRESH_JWT_EXPIRES_IN: 7d
-      PRIVATE_KEY: "-----BEGIN PRIVATE KEY----- MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDTcdCmp4jk6X4t 0HenZLx5D3DXNFgC34BRFv0lSiB4JmRII9Moiatvdz/StvehrX7kLDCcoPLO7JPH SD58TReZyo8Ad5uUMNQ5nskUQ1j8l1QnDwo6A+NoLjLx13E7FpZkwDpzgOQJ5Xm5 ZEaLy/Fb5CsAM7ApqQ6lXgkg7dvW8N+cObA4fcw2XCZoI84/vAi+0JELRaWurAr6 4mKroULmgnTo/JDhPMTZHgfIstB6nCWrFfsCKGcUZe6q5P2eaz5Yapf/uI6/2YPM rvI21Zm/lEVIWw8YNGuZXdRKLWsJDDlASqpJEKMjYKc4+hxXRbPg9vBiRYSF+tqk Ivxs4wEVAgMBAAECggEAC00SPJIIPknfgVXay1LWQvcpDguBZ7fn3Q2oPom5dgqB QhzOEKTZCZZbTikSz6yc81eMSpbMm3QoCtbo5g5dxE2/+mOqKE+6zBCZSTC3TRrO d971Kjgie6M6fFQKPID+zUg754f8SC4gZSD/p0GhdwqZJMPedr+PJZYC0WR9Iz34 JYBT0l/MZ/BFlHY233HkkpQN0ngFUi9+4ZBu9mYcUQWop2RgXvkYUTxR9rGPrhCw +ixFpG2/sv6BWJhmLwaRxIejM2rIJOkoMCKePHLRCltkRvRFIE00+PhtvLz3i5JW rU2Jz1jUt+1NzGBnLNfHNCNYaVuSydw1xdapx7/3WQKBgQDyZqr9VkEmjbqqmJBX Zz+PzYw+CSaz63/J78WzSEa7UAA59X7ny3fNHMQrlKbb7/DL9UiS/GjAjc2v0wy7 H0rnDZ+TK/DUy7Q4hvyYdk3th2AMb4kmtABRunBX45Jlp"
-      PUBLIC_KEY: "-----BEGIN PUBLIC KEY----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA03HQpqeI5Ol+LdB3p2S8 eQ9w1zRYAt+AURb9JUogeCZkSCPTKImrb3c/0rb3oa1+5CwwnKDyzuyTx0g+fE0X mcqPAHeblDDUOZ7JFENY/JdUJw8KOgPjaC4y8ddxOxaWZMA6c4DkCeV5uWRGi8vx W+QrADOwKakOpV4JIO3b1vDfnDmwOH3MNlwmaCPOP7wIvtCRC0WlrqwK+uJiq6FC 5oJ06PyQ4TzE2R4HyLLQepwlqxX7AihnFGXuquT9nms+WGqX/7iOv9mDzK7yNtWZ v5RFSFsPGDRrmV3USi1rCQw5QEqqSRCjI2CnOPocV0Wz4PbwYkWEhfrapCL8bOMB FQIDAQAB -----END PUBLIC KEY-----"
     depends_on:
       - authentication-db
       - redis-cache
@@ -95,6 +95,7 @@ services:
       - ./feed:/feed
     environment:
       PORT: 4002
+      NODE_ENV: development
       MYSQL_HOST: feed-db
       MYSQL_PORT: 3306
       MYSQL_USER: user123456

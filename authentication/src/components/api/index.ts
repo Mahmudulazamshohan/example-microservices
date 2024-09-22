@@ -12,6 +12,13 @@ export interface LoginData {
   password: string;
 }
 
+export interface SignupData {
+  username: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+}
+
 export interface AuthResponse {
   data: {
     access_token: string;
@@ -39,7 +46,7 @@ const processQueue = (
   failedQueue = [];
 };
 
-const axiosInstance: AxiosInstance = axios.create({
+export const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
 });
 
@@ -102,6 +109,11 @@ axiosInstance.interceptors.response.use(
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
   const response = await axiosInstance.post<AuthResponse>('/login', data);
+  return response.data;
+};
+
+export const signup = async (data: SignupData): Promise<AuthResponse> => {
+  const response = await axiosInstance.post<AuthResponse>('/signup', data);
   return response.data;
 };
 

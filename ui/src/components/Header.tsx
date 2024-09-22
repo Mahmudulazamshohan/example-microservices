@@ -178,7 +178,7 @@ export default function Header() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
-        position="static"
+        position="fixed"
         color='primary'
         elevation={0}
         enableColorOnDark

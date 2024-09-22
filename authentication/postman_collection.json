@@ -1,7 +1,7 @@
 {
   "item": [
     {
-      "id": "ede63ea1-8a31-4239-a373-b5062509a6ba",
+      "id": "9e5a894d-72b3-4b8e-b006-ef8d3d1fa523",
       "name": "POST /signup",
       "request": {
         "description": {
@@ -34,7 +34,7 @@
       "event": []
     },
     {
-      "id": "52fab4ad-fce6-4981-9ebe-ca60fc98cb57",
+      "id": "74ac1303-38ee-44e3-bf9c-d55960ddafcf",
       "name": "POST /login",
       "request": {
         "description": {
@@ -67,7 +67,7 @@
       "event": []
     },
     {
-      "id": "a28538b5-b24c-4830-8bc8-512860ebeea1",
+      "id": "b0c5eab7-2d02-4c58-b294-bc38a71a58bf",
       "name": "POST /refresh",
       "request": {
         "description": {
@@ -100,7 +100,7 @@
       "event": []
     },
     {
-      "id": "9b74ec62-8a77-4acc-b7e7-bdec6af67a17",
+      "id": "9f85d7fa-9bc3-4b4b-8645-c4faeac3af2f",
       "name": "GET /me",
       "request": {
         "description": {
@@ -133,7 +133,7 @@
       "event": []
     },
     {
-      "id": "18ddd7a1-61d6-4619-adb2-cbe1957440df",
+      "id": "e72ed7bc-c8bb-4edf-a114-f89c21f02968",
       "name": "GET /users/profile",
       "request": {
         "description": {
@@ -176,7 +176,7 @@
     }
   ],
   "info": {
-    "_postman_id": "9fa226d2-ff47-4d81-a9d1-6cb4f8c11920",
+    "_postman_id": "fc3b419a-6c3c-4340-ad73-938b3823ce9d",
     "name": "You App",
     "version": {
       "raw": "1.0.1",

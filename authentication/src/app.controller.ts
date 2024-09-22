@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   Post,
@@ -9,18 +8,25 @@ import {
   Req,
   UseInterceptors,
   UseFilters,
+  BadRequestException,
+  Body,
 } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { User } from './entities/User';
+import { ApiTags } from '@nestjs/swagger';
+import * as bcryptjs from 'bcryptjs';
 
+import { User } from './entities/User';
 import { UsersService } from './users/users.service';
 import { JwtAuthGuard } from './jwt.guard';
 import { AppService } from './app.service';
 import { RefreshTokenGuard } from './refreshtoken.guard';
-import { LoginDto } from './login.dto';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { LoginDto } from './users/dto/login.dto';
+import {
+  ApiResponse,
+  ResponseInterceptor,
+} from './common/interceptors/response.interceptor';
 import { CommonExceptionFilter } from './common/filter/exception.filter';
 import { ApiSwagger } from './decorators/api-operation.decorator';
+import { SignupDto } from './users/dto/signup.dto';
 
 @ApiTags('authentication')
 @Controller('/')
@@ -31,24 +37,54 @@ export class AppController {
     private readonly usersService: UsersService,
     private readonly appService: AppService,
   ) {}
+
   @ApiSwagger({
     operationId: 'signup',
     authentication: false,
+    query: { type: SignupDto },
+    response: { type: ApiResponse<User> },
   })
   @Post('/signup')
-  signup() {
-    return this.usersService.save();
+  async signup(@Body() signupDto: SignupDto) {
+    const { username, password, firstname, lastname } = signupDto;
+    const userExists = await this.usersService.findOne({ where: { username } });
+
+    if (userExists) {
+      throw new BadRequestException('Username already exists');
+    }
+
+    const hashedPassword = await bcryptjs.hashSync(password, 10);
+    const user: User = await this.usersService.create({
+      firstname,
+      lastname,
+      username,
+      password: hashedPassword,
+      hashed_rt: '',
+    });
+
+    await this.usersService.save(user);
+    return await this.appService.login({
+      username,
+      password,
+    });
   }
 
-  @ApiQuery({ type: LoginDto })
-  @ApiSwagger({ operationId: 'login', authentication: false })
+  @ApiSwagger({
+    operationId: 'login',
+    authentication: false,
+    query: { type: LoginDto },
+    response: { type: ApiResponse<User> },
+  })
   @Post('/login')
-  async login(@Body() user: LoginDto) {
-    return this.appService.login(user);
+  async login(@Body() loginDto: LoginDto) {
+    return this.appService.login(loginDto);
   }
 
   @UseGuards(RefreshTokenGuard)
-  @ApiSwagger({ operationId: 'refresh' })
+  @ApiSwagger({
+    operationId: 'refresh',
+    response: { type: ApiResponse<User> },
+  })
   @Post('/refresh')
   async refresh(@Req() req: any) {
     if (!req['user']) {
@@ -59,12 +95,12 @@ export class AppController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @ApiSwagger({ operationId: 'me' })
-  @ApiResponse({
-    type: User,
+  @ApiSwagger({
+    operationId: 'me',
+    response: { type: ApiResponse<User> },
   })
   @Get('/me')
-  token(@Request() req: any) {
-    return req ? req.user : {};
+  me(@Request() req: any) {
+    return req?.user ?? {};
   }
 }

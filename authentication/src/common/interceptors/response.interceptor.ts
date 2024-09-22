@@ -7,9 +7,29 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IApiResponse, IJsObject } from '../interfaces/types';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class ApiResponse implements IApiResponse {
-  data = null;
+export class ApiResponse<T> implements IApiResponse<T> {
+  @ApiProperty({
+    description: 'Metadata related to the response',
+    required: false,
+  })
+  metadata?: Record<string, unknown>;
+
+  @ApiProperty({
+    description: 'The actual data of the response',
+    required: false,
+  })
+  data?: T;
+
+  @ApiProperty({ description: 'The status of the response' })
+  status: string;
+
+  @ApiProperty({ description: 'Message describing the response' })
+  message: string;
+
+  @ApiProperty({ description: 'List of errors if any', required: false })
+  errors?: string[];
 
   constructor(partial: IJsObject) {
     if (partial?.metadata) {
@@ -23,8 +43,6 @@ export class ApiResponse implements IApiResponse {
       });
     }
   }
-  status: string;
-  message: string;
 }
 
 @Injectable()

@@ -20,6 +20,10 @@ declare module "authentication/LoginPage" {
 	export default LoginPage;
 };
 
+declare module "authentication/SignupPage" {
+	const SignupPage: React.ComponentType;
+	export default SignupPage;
+};
 
 declare module "authentication/useAuth" {
 	interface AuthResponse {

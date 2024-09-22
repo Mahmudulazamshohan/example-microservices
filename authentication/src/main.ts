@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { Logger as NestLogger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
-import { writeFileSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,22 +16,26 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
-  await app.listen(PORT, () => NestLogger.log(`Server Port at ${PORT}`));
-
-  const config = new DocumentBuilder()
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('Authentication Service')
     .setDescription('Authentication API Swagger')
     .setVersion('1.0')
+    .setExternalDoc('More Information', 'https://www.google.com')
+    .addServer('http://localhost/api/authentication')
     .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  // Save the Swagger document as a JSON file
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  const swaggerPath = join(__dirname, './public');
+  if (!existsSync(swaggerPath)) {
+    mkdirSync(swaggerPath, { recursive: true });
+  }
   await writeFileSync(
-    join(__dirname, '../swagger.json'),
+    join(swaggerPath, 'swagger.json'),
     JSON.stringify(document, null, 2),
   );
   SwaggerModule.setup('api-docs', app, document);
+  await app.listen(PORT, () => NestLogger.log(`Server Port at ${PORT}`));
   return app.getUrl();
 }
 

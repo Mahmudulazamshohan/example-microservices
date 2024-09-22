@@ -14,51 +14,9 @@ const buildDate = new Date().toLocaleString();
 require('dotenv').config({ silent: true });
 const enviroments = process?.env ?? {};
 
-module.exports = (env: any, argv: { [key: string]: string }) => {
+const webpackConfig = (env: any, argv: { [key: string]: string }) => {
   const isProduction: boolean = argv.mode === "production";
   let plugins: any[] = [];
-
-  if (!isProduction) {
-    plugins.push(new ReactRefreshWebpackPlugin({ overlay: false }));
-  }
-
-  plugins = [
-    ...plugins,
-    new webpack.EnvironmentPlugin({ BUILD_DATE: buildDate }),
-    new ModuleFederationPlugin({
-      name: "container",
-      remotes: {
-        feed: enviroments?.FEED_UI,
-        authentication: enviroments?.AUTHENTICATION_UI,
-      },
-      shared: {
-        ...deps,
-        react: { singleton: true, eager: true, requiredVersion: deps.react },
-        "react-dom": {
-          singleton: true,
-          eager: true,
-          requiredVersion: deps["react-dom"],
-        },
-        "react-router-dom": {
-          singleton: true,
-          eager: true,
-          requiredVersion: deps["react-router-dom"],
-        },
-        '@tanstack/react-query': {
-          singleton: true,
-          eager: true,
-          requiredVersion: deps["@tanstack/react-query"],
-        }
-      },
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "./public/index.html"),
-    }),
-  ];
-
-  if(!isProduction){
-    plugins.push(new ForkTsCheckerWebpackPlugin());
-  }
 
   return {
     entry: path.join(__dirname, "./src/index.ts"),
@@ -72,7 +30,7 @@ module.exports = (env: any, argv: { [key: string]: string }) => {
         'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
       },
       client: {
-        overlay: !isProduction,
+        overlay: true,
       },
       historyApiFallback: true,
     },
@@ -83,7 +41,6 @@ module.exports = (env: any, argv: { [key: string]: string }) => {
     output: {
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist'),
-      publicPath: 'http://localhost:4003/static',
       clean: true,
     },
     module: {
@@ -104,12 +61,47 @@ module.exports = (env: any, argv: { [key: string]: string }) => {
               "@babel/preset-react",
             ],
             plugins: [
-              !isProduction && require.resolve('react-refresh/babel')
+              require.resolve('react-refresh/babel'),
             ].filter(Boolean),
           },
         },
       ],
     },
-    plugins
+    plugins: [
+      new ReactRefreshWebpackPlugin({ overlay: false }),
+      new webpack.EnvironmentPlugin({ BUILD_DATE: buildDate }),
+      new ModuleFederationPlugin({
+        name: "container",
+        remotes: {
+          feed: enviroments?.FEED_UI || 'authentication@http://localhost:8001/remoteEntry.js',
+          authentication: enviroments?.AUTHENTICATION_UI || 'feed@http://localhost:8002/remoteEntry.js',
+        },
+        shared: {
+          ...deps,
+          react: { singleton: true, eager: true, requiredVersion: deps.react },
+          "react-dom": {
+            singleton: true,
+            eager: true,
+            requiredVersion: deps["react-dom"],
+          },
+          "react-router-dom": {
+            singleton: true,
+            eager: true,
+            requiredVersion: deps["react-router-dom"],
+          },
+          '@tanstack/react-query': {
+            singleton: true,
+            eager: true,
+            requiredVersion: deps["@tanstack/react-query"],
+          }
+        },
+      }),
+      new HtmlWebpackPlugin({
+        template: path.join(__dirname, "./public/index.html"),
+      }),
+      // new ForkTsCheckerWebpackPlugin(),
+    ]
   };
 };
+
+module.exports = webpackConfig;

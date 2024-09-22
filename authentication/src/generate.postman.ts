@@ -7,9 +7,9 @@ import { NestFactory } from '@nestjs/core';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  console.log('ENV', process?.env);
   const config = new DocumentBuilder()
-    .setTitle('API Documentation')
+    .setTitle('Authentication API')
     .setDescription('The API description')
     .setVersion('1.0')
     .addBearerAuth()
@@ -49,8 +49,8 @@ async function bootstrap() {
           header: [
             {
               key: 'Authorization', // authorization token
-              value: 'your token',
-              description: 'Authorization token',
+              value: '',
+              description: 'Bearer Token',
             },
           ],
           url: `{{baseUrl}}${path}`,

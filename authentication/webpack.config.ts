@@ -55,6 +55,7 @@ module.exports = (env: unknown, argv: { [key: string]: string }) => {
           './AuthGuard': './src/components/AuthGuard.tsx',
           './useAuth': './src/components/query/useAuth',
           './LoginPage': './src/components/LoginPage.tsx',
+          './SignupPage': './src/components/SignupPage.tsx',
         },
         shared: {
           ...deps,
