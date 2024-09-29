@@ -53,7 +53,7 @@ export class AppService {
       isRefreshToken,
     );
 
-    const options: JwtSignOptions = { algorithm: 'RS256' };
+    const options: JwtSignOptions = { algorithm: 'HS256' };
 
     const refreshToken = await this.jwtService.signAsync(payload, {
       ...options,

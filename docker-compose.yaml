@@ -71,10 +71,11 @@ services:
       REDIS_TTL: 600
       REDIS_USERNAME: 
       REDIS_PASSWORD:
-      JWT_SECRET: secret123456
-      REFRESH_JWT_SECRET: secret123456
+      JWT_SECRET: 6C4mM1Q4sHsxydgthxw_mAGVP_qNyv1obSRuDF9ZRmrYtOnXUuFOM9YoFdbav7dTOOgPxHnoWwtAzX5pLCOooA==
+      REFRESH_JWT_SECRET: B+OvdKp0vXr/wArlOlFJgUolBWFOKz9KrhNweMdOCMl5FxgvZiwB5PQ6YoK0R6OsTt2W+umHUtF2rtBuCoDNGA==
       EXPIRES_IN: 5m
       REFRESH_JWT_EXPIRES_IN: 7d
+
     depends_on:
       - authentication-db
       - redis-cache

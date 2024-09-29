@@ -29,11 +29,9 @@ export class RefreshTokenGuard extends AuthGuard('jwt-refresh') {
         const user = this.jwtService.verify(token, {
           secret: this.configService.getOrThrow<string>('REFRESH_JWT_SECRET'),
         });
-        console.log('PWP-1230', user);
 
         return this.attachUserToContext(context, type, user);
       } catch (error) {
-        console.log('PWP-1230 error', error);
         new Error(error);
       }
     }

@@ -41,14 +41,15 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secretOrPrivateKey: configService.getOrThrow<string>('PRIVATE_KEY'),
-        publicKey: configService.getOrThrow<string>('PUBLIC_KEY'),
-        signOptions: {
-          expiresIn: configService.getOrThrow<string>('EXPIRES_IN'),
-          algorithm: 'RS256',
-        },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.getOrThrow('JWT_SECRET'),
+          signOptions: {
+            expiresIn: configService.getOrThrow<string>('EXPIRES_IN'),
+            algorithm: 'HS256',
+          },
+        };
+      },
       inject: [ConfigService],
     }),
     TypeOrmConfig,

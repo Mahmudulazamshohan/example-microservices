@@ -15,17 +15,7 @@ spec:
     metadata:
       labels:
         app: {{ .Values.appName }}
-
     spec:
-      # affinity:
-      #   nodeAffinity:
-      #     requiredDuringSchedulingIgnoredDuringExecution:
-      #       nodeSelectorTerms:
-      #       - matchExpressions:
-      #         - key: disktype
-      #           operator: In
-      #           values:
-      #           - ssd
       containers:
         - name: {{ .Values.appName }}
           imagePullPolicy: IfNotPresent
@@ -45,10 +35,6 @@ spec:
              value: "{{ .Values.MYSQL_NAME }}"
            - name: PORT
              value: "{{ .Values.PORT }}"
-           - name: PRIVATE_KEY
-             value: "{{ .Values.PRIVATE_KEY }}"
-           - name: PUBLIC_KEY
-             value: "{{ .Values.PUBLIC_KEY }}"
            - name: REDIS_HOST
              value: "{{ .Values.REDIS_HOST }}"
            - name: REDIS_PORT
