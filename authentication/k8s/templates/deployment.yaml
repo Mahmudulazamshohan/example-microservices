@@ -1,13 +1,12 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.appName }}
   namespace: {{ .Values.namespace }}
-  label:
+  labels:
     app: {{ .Values.appName }}
 spec:
-  replicas: {{.Values.replicaCount}}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Values.appName }}
@@ -23,38 +22,48 @@ spec:
           ports:
             - containerPort: {{ .Values.PORT }}
           env:
-           - name: MYSQL_HOST
-             value: "{{ .Values.MYSQL_HOST }}"
-           - name: MYSQL_PORT
-             value: "{{ .Values.MYSQL_PORT }}"
-           - name: MYSQL_USER
-             value: "{{ .Values.MYSQL_USER }}"
-           - name: MYSQL_PASS
-             value: "{{ .Values.MYSQL_PASS }}"
-           - name: MYSQL_NAME
-             value: "{{ .Values.MYSQL_NAME }}"
-           - name: PORT
-             value: "{{ .Values.PORT }}"
-           - name: REDIS_HOST
-             value: "{{ .Values.REDIS_HOST }}"
-           - name: REDIS_PORT
-             value: "{{ .Values.REDIS_PORT }}"
-           - name: REDIS_TTL
-             value:  "{{ .Values.REDIS_TTL }}"
-           - name: REDIS_USERNAME
-             value: "{{ .Values.REDIS_USERNAME }}"
-           - name: REDIS_PASSWORD
-             value:  "{{ .Values.REDIS_PASSWORD }}"
-           - name: JWT_SECRET
-             value: "{{ .Values.JWT_SECRET }}"
-           - name: REFRESH_JWT_SECRET
-             value:  "{{ .Values.REFRESH_JWT_SECRET }}"
-           - name: EXPIRES_IN
-             value: "{{ .Values.EXPIRES_IN }}"
-           - name: REFRESH_JWT_EXPIRES_IN
-             value:  "{{ .Values.REFRESH_JWT_EXPIRES_IN }}"
-           - name: NODE_ENV
-             value: "{{ .Values.NODE_ENV }}"
+            - name: MYSQL_HOST
+              value: "{{ .Values.MYSQL_HOST }}"
+            - name: MYSQL_PORT
+              value: "{{ .Values.MYSQL_PORT }}"
+            - name: MYSQL_USER
+              value: "{{ .Values.MYSQL_USER }}"
+            - name: MYSQL_PASS
+              value: "{{ .Values.MYSQL_PASS }}"
+            - name: MYSQL_NAME
+              value: "{{ .Values.MYSQL_NAME }}"
+            - name: PORT
+              value: "{{ .Values.PORT }}"
+            - name: REDIS_HOST
+              value: "{{ .Values.REDIS_HOST }}"
+            - name: REDIS_PORT
+              value: "{{ .Values.REDIS_PORT }}"
+            - name: REDIS_TTL
+              value: "{{ .Values.REDIS_TTL }}"
+            - name: REDIS_USERNAME
+              value: "{{ .Values.REDIS_USERNAME }}"
+            - name: REDIS_PASSWORD
+              value: "{{ .Values.REDIS_PASSWORD }}"
+            - name: EXPIRES_IN
+              value: "{{ .Values.EXPIRES_IN }}"
+            - name: REFRESH_JWT_EXPIRES_IN
+              value: "{{ .Values.REFRESH_JWT_EXPIRES_IN }}"
+            - name: NODE_ENV
+              value: "{{ .Values.NODE_ENV }}"
+            - name: JWT_SECRET
+              value: "secret1234"
+            - name: REFRESH_JWT_SECRET
+              value: "secret1234"
+            # - name: JWT_SECRET
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: {{ .Values.appName }}-jwt-keys
+            #       key: JWT_SECRET
+            # - name: REFRESH_JWT_SECRET
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: {{ .Values.appName }}-jwt-keys
+            #       key: REFRESH_JWT_SECRET
           resources:
             requests:
               memory: "{{ .Values.resources.requests.memory }}"

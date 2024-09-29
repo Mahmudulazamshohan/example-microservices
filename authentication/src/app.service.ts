@@ -90,7 +90,6 @@ export class AppService {
 
       return data;
     } catch (e) {
-      console.log('ERROR', e);
       throw new UnauthorizedException();
     }
   }
