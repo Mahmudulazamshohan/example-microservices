@@ -5,11 +5,15 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from 'axios';
+import process from 'process';
+import { getToken } from './utils';
+import { TOKEN } from './types';
+import { SecureStorage } from './utils/secureStorage';
 
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (value?: unknown) => void;
-  reject: (reason?: any) => void;
+  reject: (reason?: unknown) => void;
 }> = [];
 
 const processQueue = (
@@ -34,9 +38,8 @@ class SwaggerApiClient {
 
   private static initAxiosInstance() {
     if (!this.axiosInstance) {
-      const API_URL = 'http://localhost/api/authentication';
       this.axiosInstance = axios.create({
-        baseURL: API_URL,
+        baseURL: process?.env?.AUTHENTICATION_API || '',
       });
 
       this.axiosInstance.interceptors.response.use(
@@ -51,35 +54,34 @@ class SwaggerApiClient {
               return new Promise((resolve, reject) => {
                 failedQueue.push({ resolve, reject });
               })
-                .then((token) => {
-                  originalRequest.headers['Authorization'] = 'Bearer ' + token;
+                .then((token: string) => {
+                  originalRequest.headers['Authorization'] = getToken(token);
                   return this.axiosInstance!(originalRequest); // Assert axiosInstance is not null
                 })
-                .catch((err) => {
-                  return Promise.reject(err);
-                });
+                .catch((err) => Promise.reject(err));
             }
 
             originalRequest._retry = true;
             isRefreshing = true;
 
-            const refreshToken = localStorage.getItem('refresh_token');
+            const refreshToken = SecureStorage.getItem(TOKEN.REFRESH_TOKEN);
 
             return new Promise((resolve, reject) => {
               this.axiosInstance!.post(
                 '/refresh',
                 {},
-                { headers: { Authorization: `Bearer ${refreshToken}` } },
+                { headers: { Authorization: getToken(refreshToken) } },
               )
                 .then(({ data }) => data)
                 .then(({ data }) => {
                   const { access_token = '', refresh_token = '' } = data;
-                  localStorage.setItem('access_token', access_token);
-                  localStorage.setItem('refresh_token', refresh_token);
+                  SecureStorage.setItem(TOKEN.ACCESS_TOKEN, access_token);
+                  SecureStorage.setItem(TOKEN.REFRESH_TOKEN, refresh_token);
+
                   this.axiosInstance!.defaults.headers.common['Authorization'] =
-                    'Bearer ' + access_token;
+                    getToken(access_token);
                   originalRequest.headers['Authorization'] =
-                    'Bearer ' + access_token;
+                    getToken(access_token);
                   processQueue(null, access_token);
                   resolve(this.axiosInstance!(originalRequest));
                 })
@@ -103,13 +105,14 @@ class SwaggerApiClient {
     if (!SwaggerApiClient.axiosInstance) {
       SwaggerApiClient.initAxiosInstance();
     }
-    const aToken = localStorage.getItem('access_token');
+
+    const aToken = SecureStorage.getItem(TOKEN.ACCESS_TOKEN);
     const axiosConfig: AxiosRequestConfig = {
       url: options.url,
       method: options.method,
       headers: {
         ...(options?.headers || {}),
-        Authorization: options?.headers?.Authentication || `Bearer ${aToken}`,
+        Authorization: options?.headers?.Authentication || getToken(aToken),
       },
       data: options?.body ? JSON.parse(options?.body) : {},
       params: options.params,
@@ -119,9 +122,14 @@ class SwaggerApiClient {
   }
 
   public static getInstance(): Promise<SwaggerClient> {
+    console.log('process.env.SWAGGER_URL', process?.env?.SWAGGER_URL);
+    if (!process?.env?.SWAGGER_URL) {
+      throw new Error('SWAGGER_URL not defined');
+    }
+
     if (!SwaggerApiClient.instance) {
       SwaggerApiClient.instance = SwaggerClient({
-        url: 'http://localhost/api/authentication/static/swagger.json',
+        url: process?.env?.SWAGGER_URL,
       });
     }
     return SwaggerApiClient.instance;

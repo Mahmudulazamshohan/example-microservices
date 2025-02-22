@@ -22,12 +22,18 @@
     "paths": {
       "@entities": ["src/entities"],
       "@entities/*": ["src/entities/*"],
+      "@services/*": ["src/services/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@config/*": ["src/config/*"],
+      "@dtos/*": ["src/dtos/*"],
+      "@modules/*": ["src/modules/*"],
+      "@config": ["src/config"],
     },
   },
   "exclude": [
     "node_modules",
     "dist",
     ".eslintrc.js",
-    "src/generate.postman.ts"
+    "src/scripts/generate.postman.ts"
   ]
 }

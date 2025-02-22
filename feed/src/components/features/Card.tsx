@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
@@ -9,17 +10,19 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+
+import {
+  Favorite as FavoriteIcon,
+  Share as ShareIcon,
+  MoreVert as MoreVertIcon,
+  Comment as CommentIcon,
+} from '@mui/icons-material';
 
 export default function FeedCard() {
-  const [liked, setLiked] = useState(false);
-  const getRandomNumber = (min = 100, max = 400) =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
+  const [liked, setLiked] = useState<boolean>(false);
 
   return (
-    <Card elevation={1.5}>
+    <Card elevation={0.85}>
       <CardHeader
         avatar={
           <Avatar
@@ -40,7 +43,7 @@ export default function FeedCard() {
       />
       <CardMedia
         component="img"
-        height={getRandomNumber()}
+        height={400}
         image="https://images.pexels.com/photos/15301144/pexels-photo-15301144/free-photo-of-foamy-waves-on-the-shore-and-skyscrapers-of-a-coastal-city-in-distance.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
         alt="Paella dish"
       />
@@ -53,7 +56,7 @@ export default function FeedCard() {
       </CardContent>
       <CardActions disableSpacing>
         <IconButton
-          aria-label="add to favorites"
+          aria-label="favorites"
           color={liked ? 'error' : 'default'}
           onClick={() => setLiked(!liked)}
         >
@@ -61,6 +64,9 @@ export default function FeedCard() {
         </IconButton>
         <IconButton aria-label="share">
           <ShareIcon />
+        </IconButton>
+        <IconButton aria-label="comments">
+          <CommentIcon />
         </IconButton>
       </CardActions>
     </Card>

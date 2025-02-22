@@ -1,13 +1,9 @@
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
-
+import { SecureStorage } from '../utils/secureStorage';
 import { AuthResponse, LoginData, SignupData } from '../api/index';
 import KEYS from './keys';
 import { useApiFetch, useApiMutate } from './useFetch';
-
-const TOKEN = {
-  ACCESS_TOKEN: 'access_token',
-  REFRESH_TOKEN: 'refresh_token',
-};
+import { TOKEN } from '../types';
 
 const key = [KEYS.USER];
 
@@ -15,8 +11,8 @@ const onSuccess =
   (queryClient: QueryClient) =>
   ({ data }) => {
     const { access_token = '', refresh_token = '' } = data;
-    localStorage.setItem(TOKEN.ACCESS_TOKEN, access_token);
-    localStorage.setItem(TOKEN.REFRESH_TOKEN, refresh_token);
+    SecureStorage.setItem(TOKEN.ACCESS_TOKEN, access_token);
+    SecureStorage.setItem(TOKEN.REFRESH_TOKEN, refresh_token);
     queryClient.setQueryData(key, data);
   };
 
@@ -33,13 +29,14 @@ export const useAuth = () => {
     'login',
     onSuccess(queryClient),
   );
+
   const { mutate: signup } = useApiMutate<AuthResponse, Error, SignupData>(
     'signup',
   );
 
   const logout = () => {
-    localStorage.removeItem(TOKEN.ACCESS_TOKEN);
-    localStorage.removeItem(TOKEN.REFRESH_TOKEN);
+    SecureStorage.removeItem(TOKEN.ACCESS_TOKEN);
+    SecureStorage.removeItem(TOKEN.REFRESH_TOKEN);
     queryClient.clear();
   };
 

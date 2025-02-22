@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const exposes = require('./src/components/shared');
-const { ModuleFederationPlugin } = require('webpack').container;
+const webpack = require('webpack');
+const { ModuleFederationPlugin } = webpack.container;
+
 const path = require('path');
 const deps = require('./package.json').devDependencies;
+
 module.exports = (env: unknown, argv: { [key: string]: string }) => {
   const isProduction = argv.mode === 'production';
   return {
@@ -48,10 +51,19 @@ module.exports = (env: unknown, argv: { [key: string]: string }) => {
       ],
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env': JSON.stringify({
+          STORAGE_KEY: process?.env?.STORAGE_KEY,
+          SWAGGER_URL: process?.env?.SWAGGER_URL,
+          AUTHENTICATION_API: process?.env?.AUTHENTICATION_API,
+        }),
+      }),
       new ModuleFederationPlugin({
         name: 'authentication',
         filename: 'remoteEntry.js',
         exposes: {
+          './useFetch': './src/components/query/useFetch.ts',
+          './SwaggerApiClient': './src/components/SwaggerApiClient.ts',
           './AuthGuard': './src/components/AuthGuard.tsx',
           './useAuth': './src/components/query/useAuth',
           './LoginPage': './src/components/LoginPage.tsx',

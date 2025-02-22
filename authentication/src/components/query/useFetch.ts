@@ -1,12 +1,14 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import SwaggerApiClient from '../SwaggerApiClient';
+import { TOKEN } from '../types';
 
 export const retryDelay = (attempt: number) =>
   Math.min(1000 * 2 ** attempt, 30000);
 
-export const fetchSwaggerApi = async (operationId: string, parameters = {}) => {
+export const fetchApi = async (operationId: string, parameters = {}) => {
   const client = await SwaggerApiClient.getInstance();
-  const aToken = localStorage.getItem('access_token');
+  const aToken = localStorage.getItem(TOKEN.ACCESS_TOKEN);
+
   try {
     const { data = {} } = await client.execute({
       operationId,
@@ -16,17 +18,14 @@ export const fetchSwaggerApi = async (operationId: string, parameters = {}) => {
       },
       http: SwaggerApiClient.axiosHttp,
     });
-    console.log('fetchSwaggerApi', data);
+
     return data;
   } catch (err) {
     console.error('fetchSwaggerApi Error', err);
   }
 };
 
-export const mutateSwaggerApi = async (
-  operationId: string,
-  requestBody = {},
-) => {
+export const mutateApi = async (operationId: string, requestBody = {}) => {
   const client = await SwaggerApiClient.getInstance();
   const { data = {} } = await client.execute({
     operationId,
@@ -43,7 +42,7 @@ export function useApiFetch<TData, TError, TVariables>(
 ) {
   return useQuery<TData, TError, TVariables>({
     queryKey,
-    queryFn: async () => await fetchSwaggerApi(operationId, params),
+    queryFn: async () => await fetchApi(operationId, params),
     retry: 3,
     retryDelay,
     staleTime: 10,
@@ -56,7 +55,7 @@ export function useApiMutate<TData, TError, TVariables>(
   onError?: (err: unknown) => void,
 ) {
   return useMutation<TData, TError, TVariables>({
-    mutationFn: async (body) => await mutateSwaggerApi(operationId, body ?? {}),
+    mutationFn: async (body) => await mutateApi(operationId, body ?? {}),
     onSuccess,
     onError,
   });

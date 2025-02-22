@@ -1,0 +1,29 @@
+{
+  "service_name": "nginx-reverse-proxy",
+  "sampler": {
+    "type": "const",
+    "param": 1
+  },
+  "reporter": {
+    "endpoint": "http://jaeger:14268/api/traces",
+    "logSpans": true,
+    "localAgentHostPort": "jaeger:6831"
+  },
+  "headers": {
+    "jaegerDebugHeader": "jaeger-debug-id",
+    "jaegerBaggageHeader": "jaeger-baggage",
+    "traceBaggageHeaderPrefix": "uberctx-",
+    "TraceContextHeaderName": "traceparent",
+    "jaegerParentHeader": "uber-trace-id"
+  },
+  "propagation": {
+    "type": "w3c",
+    "inject_format": "http_headers",
+    "extract_format": "http_headers"
+  },
+  "tags": {
+    "environment": "development",
+    "service.type": "nginx-gateway",
+    "component": "nginx-proxy"
+  }
+}

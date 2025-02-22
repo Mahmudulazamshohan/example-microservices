@@ -4,10 +4,11 @@ const { ModuleFederationPlugin } = require('webpack').container;
 const path = require('path');
 const deps = require('./package.json').dependencies;
 const exposes = require('./src/components/exposes');
+const webpack = require('webpack');
 
 module.exports = (env: unknown, argv: { [key: string]: string }) => {
   const isProduction = argv.mode === 'production';
-
+  console.log('Swagger URL: ', process?.env?.SWAGGER_URL);
   return {
     entry: path.join(__dirname, './src/components/index.ts'),
     mode: argv.mode || 'development',
@@ -47,12 +48,21 @@ module.exports = (env: unknown, argv: { [key: string]: string }) => {
       ],
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env': JSON.stringify({
+          STORAGE_KEY: process?.env?.STORAGE_KEY,
+          SWAGGER_URL: process?.env?.SWAGGER_URL,
+          AUTHENTICATION_API: process?.env?.AUTHENTICATION_API,
+        }),
+      }),
       new ModuleFederationPlugin({
         name: 'feed',
         filename: 'remoteEntry.js',
         exposes: {
-          './CounterAppOne': './src/components/CounterAppOne.tsx',
           './sections/FeedSection': './src/components/sections/FeedSection.tsx',
+        },
+        remotes: {
+          authentication: process?.env?.AUTHENTICATION_UI || 'authentication@http://localhost:8002/remoteEntry.js',
         },
         shared: {
           ...deps,

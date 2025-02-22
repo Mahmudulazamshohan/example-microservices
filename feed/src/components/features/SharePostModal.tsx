@@ -12,12 +12,18 @@ import {
   Theme,
   SxProps,
 } from '@mui/material';
+
 import CloseOutlined from '@mui/icons-material/CloseOutlined';
+import { useState } from 'react';
+import * as useFetch from 'authentication/useFetch';
 
 interface SharePostModalProps {
   open: boolean;
+  onSubmit: (form: unknown) => void;
   onClose: () => void;
 }
+
+console.log('useFetch', useFetch);
 
 const modalSx: SxProps<Theme> = {
   position: 'absolute' as const,
@@ -25,11 +31,11 @@ const modalSx: SxProps<Theme> = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: {
-    xs: '90%', // 90% width on extra-small screens
-    sm: '80%', // 80% width on small screens
-    md: '60%', // 60% width on medium screens
-    lg: '50%', // 50% width on large screens
-    xl: '40%', // 40% width on extra-large screens
+    xs: '90%',
+    sm: '80%',
+    md: '60%',
+    lg: '50%',
+    xl: '40%',
   },
   bgcolor: 'background.paper',
   boxShadow: 24,
@@ -38,7 +44,16 @@ const modalSx: SxProps<Theme> = {
   pb: 3,
 };
 
-const SharePostModal: React.FC<SharePostModalProps> = ({ open, onClose }) => {
+const SharePostModal: React.FC<SharePostModalProps> = ({
+  open,
+  onSubmit,
+  onClose,
+}) => {
+  const [content, setContent] = useState<string>('');
+  const handleContent = (e: any) => {
+    setContent(e.target.value);
+  };
+
   return (
     <Modal
       open={open}
@@ -69,11 +84,20 @@ const SharePostModal: React.FC<SharePostModalProps> = ({ open, onClose }) => {
             variant="outlined"
             placeholder="Share a post, write someting here"
             fullWidth
+            onChange={handleContent}
           />
         </Box>
         <Divider />
         <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button variant="outlined" color="primary" onClick={onClose}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() =>
+              onSubmit({
+                content,
+              })
+            }
+          >
             Post
           </Button>
         </Box>

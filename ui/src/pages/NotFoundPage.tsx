@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const NotFoundPage: React.FC = () => {
     const navigate = useNavigate();
-    const handleGoHome = () => navigate('/');
+    const navigationTo = () => navigate('/');
 
     return (
         <Container
@@ -30,7 +30,7 @@ const NotFoundPage: React.FC = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleGoHome}
+                    onClick={navigationTo}
                     sx={{ marginTop: 2 }}
                 >
                     Go to Homepage

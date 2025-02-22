@@ -92,8 +92,24 @@ services:
     networks:
       - example-microservices
 
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8090:8080" # Jenkins Web UI
+      - "50000:50000" # Agent communication
+    volumes:
+      - jenkins-data:/var/jenkins_home 
+      - /var/run/docker.sock:/var/run/docker.sock 
+    environment:
+      JENKINS_ADMIN_ID: admin
+      JENKINS_ADMIN_PASSWORD: 123456
+    networks:
+      - example-microservices
+
 volumes:
   db:
     driver:
       local
   redis_data:
+  jenkins-data:

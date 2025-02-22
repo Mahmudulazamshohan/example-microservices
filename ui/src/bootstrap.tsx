@@ -1,4 +1,4 @@
-import React, { StrictMode } from "react";
+import * as React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import routes from "./routes";
@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 
 import mTheme from './theme';
+import { StrictMode } from "react";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

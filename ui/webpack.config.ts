@@ -73,8 +73,8 @@ const webpackConfig = (env: any, argv: { [key: string]: string }) => {
       new ModuleFederationPlugin({
         name: "container",
         remotes: {
-          feed: enviroments?.FEED_UI || 'authentication@http://localhost:8001/remoteEntry.js',
-          authentication: enviroments?.AUTHENTICATION_UI || 'feed@http://localhost:8002/remoteEntry.js',
+          feed: enviroments?.FEED_UI || 'feed@http://localhost:8001/remoteEntry.js',
+          authentication: enviroments?.AUTHENTICATION_UI || 'authentication@http://localhost:8002/remoteEntry.js',
         },
         shared: {
           ...deps,

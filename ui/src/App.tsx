@@ -1,12 +1,8 @@
 import * as React from 'react';
-import { useEffect,useState } from 'react';
 import Header from './components/Header';
-import { Link, Outlet } from "react-router-dom";
-import { Box } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
+import { Outlet } from "react-router-dom";
 
 const App: React.FC = () => {
-
   return (
     <>
       <Header />

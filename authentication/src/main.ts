@@ -1,5 +1,7 @@
+import './common/apm';
+
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './modules/app.module';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import { Logger as NestLogger, ValidationPipe } from '@nestjs/common';
@@ -7,34 +9,72 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 
+import { RmqService } from './common/rmq/rabbitmq.service';
+import { SERVICES } from './utils/constants';
+import { TracingInterceptor } from './common/interceptors/tracing.interceptor';
+import { generateApiCode } from './utils/generate.code';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const serviceName = configService.getOrThrow('SERVICE_NAME');
+  const serviceUrl = configService.getOrThrow('SERVICE_URL');
+  const version = configService.getOrThrow('VERSION');
+
   const PORT: number = Number(configService.getOrThrow<number>('PORT')) || 4001;
 
   app.useLogger(app.get(Logger));
-  app.useGlobalInterceptors(new LoggerErrorInterceptor());
+  app.useGlobalInterceptors(
+    new LoggerErrorInterceptor(),
+    new TracingInterceptor(),
+  );
+
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Authentication Service')
-    .setDescription('Authentication API Swagger')
-    .setVersion('1.0')
-    .setExternalDoc('More Information', 'https://www.google.com')
-    .addServer('http://localhost/api/authentication')
-    .addBearerAuth()
-    .build();
+  if (process.env?.NODE_ENV === 'development') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle(serviceName)
+      .setDescription(`${serviceName} API Description`)
+      .setVersion(version)
+      .setExternalDoc('More Information', '')
+      .addServer(serviceUrl)
+      .addBearerAuth()
+      .build();
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  const swaggerPath = join(__dirname, './public');
-  if (!existsSync(swaggerPath)) {
-    mkdirSync(swaggerPath, { recursive: true });
+    const document: any = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api-docs', app, document);
+
+    const publicPath = join(__dirname, './public');
+
+    if (!existsSync(publicPath)) {
+      mkdirSync(publicPath, { recursive: true });
+    }
+
+    await writeFileSync(
+      join(publicPath, 'swagger.json'),
+      JSON.stringify(document, null, 2),
+    );
+    // this will generate api request for ui with axios from swagger json.
+    const apiGenerationPath = join(__dirname, '../src/components/api');
+
+    if (!apiGenerationPath) {
+      mkdirSync(apiGenerationPath, { recursive: true });
+    }
+
+    const code = await generateApiCode(document);
+    console.log(code);
+
+    await writeFileSync(join(apiGenerationPath, 'index.ts'), code, 'utf-8');
+
+    NestLogger.log('API code generated successfully', 'Bootstrap');
   }
-  await writeFileSync(
-    join(swaggerPath, 'swagger.json'),
-    JSON.stringify(document, null, 2),
-  );
-  SwaggerModule.setup('api-docs', app, document);
+
+  const rmqService = app.get<RmqService>(RmqService);
+  Object.values(SERVICES).forEach((service) => {
+    app.connectMicroservice(rmqService.getOptions(service));
+  });
+
+  await app.startAllMicroservices();
   await app.listen(PORT, () => NestLogger.log(`Server Port at ${PORT}`));
   return app.getUrl();
 }

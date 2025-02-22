@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { FC } from 'react';
 import { Avatar, Box, Button, Card, TextField } from '@mui/material';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
@@ -7,15 +7,15 @@ import SharePostModal from './SharePostModal';
 
 const SharePost: FC = () => {
   const [showPost, setShowPost] = useState<boolean>(false);
-
-  const onClose = () => {
-    setShowPost(false);
-  };
-
+  const onClose = () => setShowPost(false);
   const handleModal = () => setShowPost(true);
+  const onSubmit = useCallback((form: unknown) => {
+    setShowPost(false);
+  }, []);
+
   return (
     <>
-      <SharePostModal open={showPost} onClose={onClose} />
+      <SharePostModal open={showPost} onSubmit={onSubmit} onClose={onClose} />
       <Box marginBottom={3} marginTop={3}>
         <Card elevation={0}>
           <Box padding={3}>
@@ -27,7 +27,7 @@ const SharePost: FC = () => {
                 fullWidth
                 multiline
                 rows={2}
-                style={{ background: '#eee' }}
+                style={{ background: '#eeeeee' }}
                 onClick={handleModal}
               />
             </Box>

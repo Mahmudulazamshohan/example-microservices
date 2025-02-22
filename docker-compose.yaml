@@ -60,6 +60,8 @@ services:
     env_file:
       - ./authentication/.env
     environment:
+      SERVICE_NAME: authentication
+      NODE_ENV: development
       PORT: 4001
       MYSQL_HOST: authentication-db
       MYSQL_PORT: 3306
@@ -75,6 +77,10 @@ services:
       REFRESH_JWT_SECRET: B+OvdKp0vXr/wArlOlFJgUolBWFOKz9KrhNweMdOCMl5FxgvZiwB5PQ6YoK0R6OsTt2W+umHUtF2rtBuCoDNGA==
       EXPIRES_IN: 5m
       REFRESH_JWT_EXPIRES_IN: 7d
+      STORAGE_KEY: key123456
+      AUTHENTICATION_API: http://localhost/api/authentication
+      AUTHENTICATION_CDN: http://localhost/api/authentication/static/swagger.json
+      SWAGGER_URL: http://localhost/api/authentication/static/swagger.json
 
     depends_on:
       - authentication-db
@@ -104,6 +110,12 @@ services:
       MYSQL_NAME: feed
       AUTHENTICATION_UI: "authentication@http://localhost:8001/remoteEntry.js"
       FEED_UI: "feed@http://localhost:8002/remoteEntry.js"
+      RABBIT_MQ_URI: "amqp://root:123456@rabbitmq:5672"
+      RABBIT_MQ_AUTHENTICATION_QUEUE: "authentication"
+      RABBIT_MQ_FEED_QUEUE: "feed"
+      SWAGGER_URL: http://localhost/api/feed/static/swagger.json
+    env_file:
+      - ./feed/.env
     depends_on:
       - authentication
       - feed-db
@@ -142,9 +154,36 @@ services:
       - ui
     networks:
       - example-microservices
+
+  # jenkins:
+  #   extends:
+  #     file: ./common/common-services.yaml
+  #     service: jenkins
+  #   volumes:
+  #    - "jenkins-data:/var/jenkins_home"
+  #    - "/var/run/docker.sock:/var/run/docker.sock"
+  #   networks:
+  #     - example-microservices
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    environment:
+      - LOG_LEVEL=debug
+    networks:
+      - example-microservices
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
         
 volumes:
   redis_data:
+  jenkins-data:
   authentication-db:
     driver:
       local
