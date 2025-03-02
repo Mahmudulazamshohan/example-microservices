@@ -1,0 +1,23 @@
+name: MobileCI/CDPipeline
+on:
+  push:
+    branches: ['*']
+concurrency:
+  group: ${{ github.actor }}@${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check branch
+        run: |
+          echo event_name: "${{ github.event_name }}"
+          echo action: "${{github.event.action}}"
+          echo previous branch: "${{github.event.ref}}"
+          echo deleted branch: "${{github.event.deleted}}"
+     
+
+        
