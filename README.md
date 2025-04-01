@@ -72,7 +72,48 @@ graph TB
     class RMQ broker;
     class JAEGER monitoring;
 ```
+### Sequence Diagram
+```mermaid
+sequenceDiagram
+    participant Client as External Client
+    participant Ingress as Nginx Ingress
+    participant UI as UI Service
+    participant Auth as Auth Service
+    participant Feed as Feed Service
+    participant AuthDB as MySQL (Auth)
+    participant FeedDB as MySQL (Feed)
+    participant Redis as Redis Cache
+    participant RMQ as RabbitMQ
+    participant Jaeger as Jaeger Tracing
 
+    %% Initial Request Flow
+    Client->>+Ingress: HTTP Request
+    Ingress->>+UI: Route Request
+    
+    %% Authentication Flow
+    UI->>+Auth: Authentication Request
+    Auth->>Redis: Check Cache
+    Auth->>AuthDB: Validate Credentials
+    AuthDB-->>Auth: User Data
+    Auth-->>UI: Auth Response
+    Auth->>RMQ: Publish Auth Event
+    
+    %% Feed Flow
+    UI->>+Feed: Request Feed Data
+    Feed->>FeedDB: Query Content
+    FeedDB-->>Feed: Feed Data
+    Feed-->>UI: Feed Response
+    Feed->>RMQ: Publish Feed Event
+    
+    %% Response to Client
+    UI-->>Ingress: Aggregated Response
+    Ingress-->>Client: Final Response
+    
+    %% Tracing Flow
+    Auth->>Jaeger: Send Traces
+    Feed->>Jaeger: Send Traces
+    UI->>Jaeger: Send Traces
+```
 ## Architecture Overview
 
 ### 1. Authentication Service (Port: 4001, 8001)
