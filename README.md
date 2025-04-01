@@ -6,46 +6,71 @@ A modern microservices-based application consisting of three main services: Auth
 ## System Architecture
 ```mermaid
 graph TB
-    Client[Client Browser]
-    Gateway[API Gateway]
-    Auth[Authentication Service]
-    Feed[Feed Service]
-    UI[UI Service]
-    AuthDB[(MySQL Auth DB)]
-    FeedDB[(MySQL Feed DB)]
-    Redis[(Redis Cache)]
-    RMQ[RabbitMQ]
-    Jaeger[Jaeger Tracing]
+    subgraph Kubernetes Cluster
+        INGN[Nginx Ingress Controller]
+        
+        subgraph UI Service
+            UI[UI Pod]
+            UISVC[UI Service]
+        end
+        
+        subgraph Authentication Service
+            AUTH[Authentication Pod]
+            AUTHSVC[Auth Service]
+            AUTHDB[(MySQL)]
+            AUTHREDIS[(Redis)]
+        end
+        
+        subgraph Feed Service
+            FEED[Feed Pod]
+            FEEDSVC[Feed Service]
+            FEEDDB[(MySQL)]
+        end
+        
+        subgraph Message Broker
+            RMQ[RabbitMQ]
+        end
+        
+        subgraph Observability
+            JAEGER[Jaeger]
+        end
+    end
+    
+    Client[External Client] --> INGN
+    INGN --> UISVC
+    UISVC --> UI
+    
+    UI --> AUTHSVC
+    UI --> FEEDSVC
+    
+    AUTHSVC --> AUTH
+    AUTH --> AUTHDB
+    AUTH --> AUTHREDIS
+    AUTH --> RMQ
+    
+    FEEDSVC --> FEED
+    FEED --> FEEDDB
+    FEED --> RMQ
+    
+    AUTH -.-> JAEGER
+    FEED -.-> JAEGER
+    UI -.-> JAEGER
 
-    Client --> Gateway
-    Gateway --> Auth
-    Gateway --> Feed
-    Gateway --> UI
+    classDef client fill:#85C1E9,stroke:#333,stroke-width:2px;
+    classDef ingress fill:#F8C471,stroke:#333,stroke-width:2px;
+    classDef service fill:#82E0AA,stroke:#333,stroke-width:2px;
+    classDef pod fill:#85C1E9,stroke:#333,stroke-width:2px;
+    classDef database fill:#BB8FCE,stroke:#333,stroke-width:2px;
+    classDef broker fill:#F1948A,stroke:#333,stroke-width:2px;
+    classDef monitoring fill:#F7DC6F,stroke:#333,stroke-width:2px;
     
-    Auth --> AuthDB
-    Auth --> Redis
-    Auth --> RMQ
-    
-    Feed --> FeedDB
-    Feed --> RMQ
-    Feed --> Redis
-    
-    UI --> Auth
-    UI --> Feed
-    
-    Auth -.-> Jaeger
-    Feed -.-> Jaeger
-    UI -.-> Jaeger
-
-    classDef service fill:#68b587,stroke:#333,stroke-width:2px;
-    classDef database fill:#3498db,stroke:#333,stroke-width:2px;
-    classDef messagequeue fill:#e74c3c,stroke:#333,stroke-width:2px;
-    classDef monitoring fill:#f1c40f,stroke:#333,stroke-width:2px;
-    
-    class Auth,Feed,UI service;
-    class AuthDB,FeedDB,Redis database;
-    class RMQ messagequeue;
-    class Jaeger monitoring;
+    class Client client;
+    class INGN ingress;
+    class UISVC,AUTHSVC,FEEDSVC service;
+    class UI,AUTH,FEED pod;
+    class AUTHDB,FEEDDB,AUTHREDIS database;
+    class RMQ broker;
+    class JAEGER monitoring;
 ```
 
 ## Architecture Overview
