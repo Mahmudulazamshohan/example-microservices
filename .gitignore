@@ -1,8 +1,10 @@
 /feed/dist
+/feed/ui/dist
 /feed/node_modules
 /feed/package-lock.json
 
 /authentication/dist
+/authentication/ui/dist
 /authentication/node_modules
 /authentication/package-lock.json
 

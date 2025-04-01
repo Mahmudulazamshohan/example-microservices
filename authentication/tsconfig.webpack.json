@@ -6,7 +6,7 @@
 			"dom.iterable",
 			"esnext"
 		],
-		"baseUrl": "./src/components",
+		"baseUrl": "./ui",
 		"allowJs": false,
 		"skipLibCheck": true,
 		"esModuleInterop": true,
@@ -20,13 +20,13 @@
 		"isolatedModules": false,
 		"sourceMap": true,
 		"noEmit": false,
-		"jsx": "react-jsx",
+		"jsx": "react-jsx"
 	},
 	"include": [
-		"src/components"
+		"ui"
 	],
 	"exclude":[
 		"node_modules",
-		"dist",
-	],
+		"dist"
+	]
 }

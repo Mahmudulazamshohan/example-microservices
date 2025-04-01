@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const exposes = require('./src/components/shared');
 const webpack = require('webpack');
 const { ModuleFederationPlugin } = webpack.container;
 
 const path = require('path');
 const deps = require('./package.json').devDependencies;
 
-module.exports = (env: unknown, argv: { [key: string]: string }) => {
+// Configure esbuild to use WASM
+process.env.ESBUILD_BINARY_PATH = require.resolve('esbuild-wasm/esbuild.wasm');
+
+module.exports = (_: unknown, argv: { [key: string]: string }) => {
   const isProduction = argv.mode === 'production';
+
   return {
-    entry: path.join(__dirname, './src/components/index.ts'),
+    entry: path.join(__dirname, './ui/index.ts'),
     mode: argv?.mode || 'development',
     devServer: {
       host: '0.0.0.0',
@@ -32,20 +35,31 @@ module.exports = (env: unknown, argv: { [key: string]: string }) => {
     },
     output: {
       filename: 'bundle.js',
-      path: path.resolve(__dirname, 'dist/public'),
+      path: path.resolve(__dirname, 'dist/ui'),
       publicPath: isProduction
         ? 'http://localhost/api/authentication/static/'
         : 'http://localhost:8001/',
     },
     module: {
       rules: [
+        // {
+        //   test: /\.(js|jsx|tsx|ts)$/,
+        //   loader: 'ts-loader',
+        //   exclude: /node_modules/,
+        //   options: {
+        //     configFile: 'tsconfig.webpack.json',
+        //     transpileOnly: true,
+        //   },
+        // },
         {
           test: /\.(js|jsx|tsx|ts)$/,
-          loader: 'ts-loader',
+          loader: 'esbuild-loader',
           exclude: /node_modules/,
           options: {
-            configFile: 'tsconfig.webpack.json',
-            transpileOnly: true,
+            loader: 'tsx',
+            target: 'es2015',
+            tsconfigRaw: require('./tsconfig.webpack.json'),
+            implementation: require('esbuild-wasm'),
           },
         },
       ],
@@ -62,12 +76,12 @@ module.exports = (env: unknown, argv: { [key: string]: string }) => {
         name: 'authentication',
         filename: 'remoteEntry.js',
         exposes: {
-          './useFetch': './src/components/query/useFetch.ts',
-          './SwaggerApiClient': './src/components/SwaggerApiClient.ts',
-          './AuthGuard': './src/components/AuthGuard.tsx',
-          './useAuth': './src/components/query/useAuth',
-          './LoginPage': './src/components/LoginPage.tsx',
-          './SignupPage': './src/components/SignupPage.tsx',
+          './useFetch': './ui/query/useFetch.ts',
+          './SwaggerApiClient': './ui/SwaggerApiClient.ts',
+          './AuthGuard': './ui/AuthGuard.tsx',
+          './useAuth': './ui/query/useAuth.ts', // Fixed path - was '../ui/query/useAuth'
+          './LoginPage': './ui/LoginPage.tsx',
+          './SignupPage': './ui/SignupPage.tsx',
         },
         shared: {
           ...deps,
@@ -86,6 +100,16 @@ module.exports = (env: unknown, argv: { [key: string]: string }) => {
             singleton: true,
             eager: true,
             requiredVersion: deps['@tanstack/react-query'],
+          },
+          '@reduxjs/toolkit': {
+            singleton: true,
+            eager: true,
+            requiredVersion: deps['@reduxjs/toolkit'],
+          },
+          'react-redux': {
+            singleton: true,
+            eager: true,
+            requiredVersion: deps['react-redux'],
           },
         },
       }),

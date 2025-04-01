@@ -16,18 +16,17 @@ const env = process?.env ?? {};
 
 module.exports = (_: any, argv: { [key: string]: string }) => {
     const isProduction: boolean = argv.mode === "production";
+    const remotes = {
+        feed: env?.FEED_UI,
+        authentication: env?.AUTHENTICATION_UI,
+    };
 
     let plugins: any[] = [
         new webpack.EnvironmentPlugin({ BUILD_DATE: buildDate }),
-        new webpack.DefinePlugin({
-            "process.env": JSON.stringify(env),
-        }),
+        new webpack.DefinePlugin({ "process.env": JSON.stringify(env) }),
         new ModuleFederationPlugin({
             name: "container",
-            remotes: {
-                feed: env?.FEED_UI,
-                authentication: env?.AUTHENTICATION_UI,
-            },
+            remotes,
             shared: {
                 ...deps,
                 react: {
@@ -58,7 +57,7 @@ module.exports = (_: any, argv: { [key: string]: string }) => {
     ];
 
     return {
-        entry: path.join(__dirname, "./src/index.ts"),
+        entry: path.join(__dirname, "./ui/index.ts"),
         mode: argv?.mode || "development",
         devServer: {
             port: 8003,

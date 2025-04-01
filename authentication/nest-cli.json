@@ -1,12 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "app",
   "compilerOptions": {
     "deleteOutDir": true
   },
   "exclude": [
-    "src/components",
+    "ui",
     ".eslintrc.js",
     "generate.postman.ts"
   ],

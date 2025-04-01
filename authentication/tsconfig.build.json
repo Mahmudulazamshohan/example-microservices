@@ -1,11 +1,35 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "target": "ES2020",
+    "module": "CommonJS",
+    "lib": ["ES2020", "DOM"],
+    "removeComments": true,
+    "paths": {
+      "@/*": ["app/*"],
+      "@":["./app"],
+      "@entities": ["app/entities"],
+      "@entities/*": ["app/entities/*"],
+      "@services/*": ["app/services/*"],
+      "@controllers": ["app/controllers"],
+      "@controllers/*": ["app/controllers/*"],
+      "@config/*": ["app/config/*"],
+      "@dtos/*": ["app/dtos/*"],
+      "@modules/*": ["app/modules/*"],
+      "@config": ["app/config"],
+      "@utils": ["app/utils"],
+      "@utils/*": ["app/utils/*"],
+    },
+  },
+
   "exclude": [
     "node_modules",
     "test",
     "dist",
     "**/*spec.ts",
-    "src/components",
-    "webpack.config.ts"
+    "ui",
+    "webpack.config.ts",
+    "vite.config.ts"
   ]
 }

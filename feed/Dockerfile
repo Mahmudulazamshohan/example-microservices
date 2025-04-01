@@ -1,13 +1,24 @@
-# build stage
-FROM node:lts-alpine as dev-stage
+FROM node:20-alpine AS builder
 
 WORKDIR /feed
 
+# Copy only package files first to leverage Docker cache
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-COPY ./ .
+# Copy the rest of the application
+COPY . .
 
-CMD npm run start:dev
+# Build the application
+RUN npm run build:prod
 
-EXPOSE 4002 8002
+FROM node:20-alpine
+WORKDIR /feed
+
+# Copy only the necessary files from the builder stage
+COPY --from=builder /feed/dist ./dist
+COPY --from=builder /feed/node_modules ./node_modules
+COPY package*.json ./
+
+EXPOSE 4001 8001
+CMD ["npm", "run", "start:dev"]
