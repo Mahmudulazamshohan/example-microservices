@@ -57,7 +57,7 @@ module.exports = (_: any, argv: { [key: string]: string }) => {
     ];
 
     return {
-        entry: path.join(__dirname, "./ui/index.ts"),
+        entry: path.join(__dirname, "./src/index.ts"),
         mode: argv?.mode || "development",
         devServer: {
             port: 8003,
@@ -86,21 +86,52 @@ module.exports = (_: any, argv: { [key: string]: string }) => {
             rules: [
                 {
                     test: /\.(js|jsx|tsx|ts)$/,
-                    loader: "babel-loader",
+                    loader: 'esbuild-loader',
                     exclude: /node_modules/,
                     options: {
-                        cacheDirectory: true,
-                        babelrc: false,
-                        presets: [
-                            [
-                                "@babel/preset-env",
-                                { targets: { browsers: "last 2 versions" } },
-                            ],
-                            "@babel/preset-typescript",
-                            "@babel/preset-react",
-                        ],
+                        loader: 'tsx',
+                        target: 'es2015',
+                        tsconfigRaw: require('./tsconfig.json'),
+                        implementation: require('esbuild-wasm'),
                     },
                 },
+                // {
+                //     test: /\.(js|jsx|tsx|ts)$/,
+                //     loader: "babel-loader",
+                //     exclude: /node_modules/,
+                //     options: {
+                //         cacheDirectory: true,
+                //         babelrc: false,
+                //         presets: [
+                //             [
+                //                 "@babel/preset-env",
+                //                 { targets: { browsers: "last 2 versions" } },
+                //             ],
+                //             "@babel/preset-typescript",
+                //             "@babel/preset-react",
+                //         ],
+                //     },
+                // },
+                // {
+                //     test: /\.(js|jsx|tsx|ts)$/,
+                //     loader: 'swc-loader',
+                //     exclude: /node_modules/,
+                //     options: {
+                //       jsc: {
+                //         parser: {
+                //           syntax: 'typescript',
+                //           tsx: true,
+                //         },
+                //         transform: {
+                //           react: {
+                //             runtime: 'automatic',
+                //             refresh: !isProduction,
+                //           },
+                //         },
+                //         target: 'es2015',
+                //       },
+                //     },
+                //   }
             ],
         },
         plugins

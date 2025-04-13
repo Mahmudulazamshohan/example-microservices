@@ -13,6 +13,7 @@ import { RmqService } from './common/rmq/rabbitmq.service';
 import { SERVICES } from './utils/constants';
 import { TracingInterceptor } from './common/interceptors/tracing.interceptor';
 import { generateApiCode } from './utils/generate.code';
+import { generateRtkApiCode } from 'utils/generate.rtk';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -64,8 +65,10 @@ async function bootstrap() {
     }
 
     const code = await generateApiCode(document);
+    const apiCode = await generateRtkApiCode(document);
 
     await writeFileSync(join(apiGenerationPath, 'index.ts'), code, 'utf-8');
+    await writeFileSync(join(apiGenerationPath, 'api.ts'), apiCode, 'utf-8');
 
     NestLogger.log('API code generated successfully', 'Bootstrap');
   }

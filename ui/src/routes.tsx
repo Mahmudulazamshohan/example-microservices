@@ -3,7 +3,7 @@ import * as React from 'react';
 import { createBrowserRouter } from "react-router-dom";
 import { Suspense } from "react";
 
-import AuthWrapper from './AuthWrapper';
+import Protected from './Protected';
 import MainPage from './pages/MainPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import NotFoundPage from './pages/NotFoundPage';
@@ -14,18 +14,13 @@ const SignupPage = React.lazy(() => import("authentication/SignupPage"));
 const routers = createBrowserRouter([
     {
         path: '/',
-        element: (
-            <ErrorBoundary>
-                <AuthWrapper />
-            </ErrorBoundary>
-        ),
+        element: <Protected />,
         children: [
             {
                 path: '',
                 element: <MainPage />,
             }
         ],
-
     },
     {
         path: 'login',

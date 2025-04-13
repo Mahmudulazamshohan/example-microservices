@@ -9,11 +9,12 @@ import { RmqModule } from '@common/rmq/rabbitmq.module';
 import { SERVICES } from '@utils/constants';
 import { ProducerService } from '@services/producer.service';
 
-import { CommentsModule } from './comments.module';
-import { ConnectionsModule } from './connections.module';
-import { PostsModule } from './posts.module';
-import { LikesModule } from './likes.module';
+// import { CommentsModule } from './comments.module';
+// import { ConnectionsModule } from './connections.module';
+// import { PostsModule } from './posts.module';
+// import { LikesModule } from './likes.module';
 import { TypeOrmConfig } from '@config/typeorm';
+import { FeedModule } from './feed.module';
 
 @Module({
   imports: [
@@ -28,10 +29,11 @@ import { TypeOrmConfig } from '@config/typeorm';
     TypeOrmConfig,
     RmqModule.register({ name: SERVICES.AUTHENTICATION }),
     RmqModule.register({ name: SERVICES.FEED }),
-    CommentsModule,
-    ConnectionsModule,
-    LikesModule,
-    PostsModule,
+    // CommentsModule,
+    // ConnectionsModule,
+    // LikesModule,
+    // PostsModule,
+    FeedModule,
   ],
   controllers: [],
   providers: [ConfigService, ProducerService],

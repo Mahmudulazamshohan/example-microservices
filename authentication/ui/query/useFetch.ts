@@ -59,4 +59,8 @@ export function useApiMutate<TData, TError, TVariables>(
     onSuccess,
     onError,
   });
+};
+
+export function useApi<TData, TError, TVariables >(){
+  
 }

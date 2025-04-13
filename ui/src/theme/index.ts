@@ -1,42 +1,42 @@
 import { createTheme, ThemeOptions } from '@mui/material/styles';
 
-const muiTheme: ThemeOptions = {
+const theme: ThemeOptions = {
     palette: {
         primary: {
-            main: '#2196f3', // Primary color
-            light: '#63a4ff', // Lighter shade of primary color
-            dark: '#004ba0', // Darker shade of primary color
-            contrastText: '#ffffff', // Text color on primary background
+            main: '#2196f3',
+            light: '#63a4ff',
+            dark: '#004ba0',
+            contrastText: '#ffffff',
         },
         secondary: {
-            main: '#dc004e', // Secondary color
-            light: '#ff6f60', // Lighter shade of secondary color
-            dark: '#9a0036', // Darker shade of secondary color
-            contrastText: '#ffffff', // Text color on secondary background
+            main: '#dc004e',
+            light: '#ff6f60',
+            dark: '#9a0036',
+            contrastText: '#ffffff'
         },
         error: {
-            main: '#f44336', // Error color
+            main: '#f44336',
         },
         warning: {
-            main: '#ff9800', // Warning color
+            main: '#ff9800',
         },
         info: {
-            main: '#2196f3', // Info color
+            main: '#2196f3',
         },
         success: {
-            main: '#4caf50', // Success color
+            main: '#4caf50',
         },
         background: {
-            default: '#ffffff', // Default background color
-            paper: '#fafafa', // Background color for paper components
+            default: '#ffffff',
+            paper: '#fafafa',
         },
         text: {
-            primary: '#333333', // Primary text color
-            secondary: '#666666', // Secondary text color
+            primary: '#333333',
+            secondary: '#666666',
         },
     },
     typography: {
-        fontFamily: 'Roboto, Arial, sans-serif',
+        fontFamily: 'Roboto, Arial, sans-serif !important',
         h1: {
             fontSize: '3rem',
             fontWeight: 700,
@@ -110,7 +110,7 @@ const muiTheme: ThemeOptions = {
         MuiToolbar: {
             styleOverrides: {
                 root: {
-                    backgroundColor: '#000', // Override Toolbar background color
+                    backgroundColor: '#000',
                     border: '1px solid rgba(51, 51, 51, 0.15)'
                 },
             },
@@ -118,4 +118,4 @@ const muiTheme: ThemeOptions = {
     },
 };
 
-export default createTheme(muiTheme);
+export default createTheme(theme);

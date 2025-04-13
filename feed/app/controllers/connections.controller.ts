@@ -1,82 +1,117 @@
 import {
   Controller,
-  Post,
   Get,
-  Put,
-  Delete,
+  Post,
   Body,
+  Patch,
   Param,
+  Delete,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ConnectionsService } from '../services/connections.service';
-import { CreateConnectionDto } from '../dtos/create-connection.dto';
-import { ApiSwagger } from '../decorators/api-operation.decorator';
-import { Connection } from '@entities/Connections';
-import { ApiResponse } from '@common/interceptors/response.interceptor';
-import { ProducerService } from '@services/producer.service';
-import { EventEnvelope } from '@common/types/event-envelope.type';
-import { SERVICES } from '@utils/constants';
+import {
+  CreateConnectionDto,
+  UpdateConnectionDto,
+} from '../dtos/connection.dto';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { User } from '../decorators/user.decorator';
 
+@ApiTags('connections')
 @Controller('connections')
+@ApiBearerAuth()
 export class ConnectionsController {
-  constructor(
-    private readonly connectionsService: ConnectionsService,
-    private readonly producerService: ProducerService,
-  ) {}
+  constructor(private readonly connectionsService: ConnectionsService) {}
 
-  @Get()
-  async index() {
-    try {
-      const event = await this.producerService.sendEventWithResponse<
-        EventEnvelope<unknown>,
-        unknown
-      >(SERVICES.AUTHENTICATION, 'user.context', {
-        version: '1.00',
-        eventType: 'user.context',
-        timestamp: new Date().toISOString(),
-        payload: {
-          name: 'user1',
-          userId: 1,
-        },
-      });
-      return event;
-    } catch (e) {
-      console.log('RMQ error', e);
-    }
-    return {};
-  }
-
-  @ApiSwagger({
-    operationId: 'createConnection',
-    auth: false,
-    query: CreateConnectionDto,
-    response: { type: ApiResponse<Connection> },
-  })
   @Post()
-  create(@Body() createConnectionDto: CreateConnectionDto) {
+  @ApiOperation({ summary: 'Create a new connection request' })
+  @ApiResponse({
+    status: 201,
+    description: 'The connection request has been successfully created.',
+  })
+  create(
+    @Body() createConnectionDto: CreateConnectionDto,
+    @User() user: { user_id: number },
+  ) {
+    // Ensure the user can only create connection requests from themselves
+    if (user.user_id !== createConnectionDto.requester_id) {
+      throw new ForbiddenException(
+        'You can only create connection requests from your own account',
+      );
+    }
+
+    // Prevent self-connections
+    if (createConnectionDto.requester_id === createConnectionDto.addressee_id) {
+      throw new ForbiddenException('You cannot connect with yourself');
+    }
+
     return this.connectionsService.create(createConnectionDto);
   }
-  @ApiSwagger({
-    operationId: 'getConnections',
-    auth: false,
-    response: { type: ApiResponse<Connection[]> },
+
+  @Get()
+  @ApiOperation({ summary: 'Get all connections for the authenticated user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all connections for the authenticated user.',
   })
-  @Get(':user_id')
-  findConnections(@Param('user_id') userId: number) {
-    return this.connectionsService.findConnections(userId);
+  findByUser(@User() user: { user_id: number }) {
+    return this.connectionsService.findByUser(user.user_id);
   }
 
-  @Put(':id/accept')
-  accept(@Param('id') connectionId: number) {
-    return this.connectionsService.updateStatus(connectionId, 'accepted');
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a connection by ID' })
+  @ApiResponse({ status: 200, description: 'Return the connection.' })
+  @ApiResponse({ status: 404, description: 'Connection not found.' })
+  findOne(@Param('id') id: string) {
+    return this.connectionsService.findOne(+id);
   }
 
-  @Put(':id/reject')
-  reject(@Param('id') connectionId: number) {
-    return this.connectionsService.updateStatus(connectionId, 'rejected');
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a connection status' })
+  @ApiResponse({
+    status: 200,
+    description: 'The connection has been successfully updated.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async update(
+    @Param('id') id: string,
+    @Body() updateConnectionDto: UpdateConnectionDto,
+    @User() user: { user_id: number },
+  ) {
+    const connection = await this.connectionsService.findOne(+id);
+
+    // Only the addressee can update the connection status
+    if (connection?.addressee_id !== user.user_id) {
+      throw new ForbiddenException(
+        'Only the connection recipient can update the status',
+      );
+    }
+
+    return this.connectionsService.update(+id, updateConnectionDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') connectionId: number) {
-    return this.connectionsService.remove(connectionId);
+  @ApiOperation({ summary: 'Delete a connection' })
+  @ApiResponse({
+    status: 200,
+    description: 'The connection has been successfully deleted.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async remove(@Param('id') id: string, @User() user: { user_id: number }) {
+    const connection = await this.connectionsService.findOne(+id);
+
+    // Either user in the connection can remove it
+    if (
+      connection?.requester_id !== user.user_id &&
+      connection?.addressee_id !== user.user_id
+    ) {
+      throw new ForbiddenException('You can only delete your own connections');
+    }
+
+    return this.connectionsService.remove(+id);
   }
 }

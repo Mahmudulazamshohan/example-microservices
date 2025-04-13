@@ -1,7 +1,8 @@
-import { Comment } from './Comments';
-import { Connection } from './Connections';
+import { Comment } from './Comment';
+import { Connection } from './Connection';
 import { Like } from './Like';
 import { Post } from './Post';
+import { PostMedia } from './PostMedia';
 
 export const ENTITIES = [Post, Like, Connection, Comment];
 
@@ -10,4 +11,5 @@ export default {
   Like,
   Connection,
   Comment,
+  PostMedia,
 };

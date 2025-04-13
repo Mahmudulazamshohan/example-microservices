@@ -4,18 +4,20 @@ import { useAuth } from './query/useAuth';
 import { Backdrop, CircularProgress } from '@mui/material';
 
 const AuthGuard: React.FC = () => {
-  const { user, isLoading } = useAuth();
+  // const { user, isLoading } = useAuth();
 
-  if (isLoading) {
-    return (
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={isLoading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <Backdrop
+  //       sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+  //       open={isLoading}
+  //     >
+  //       <CircularProgress color="inherit" />
+  //     </Backdrop>
+  //   );
+  // }
+
+  return <Outlet />;
 
   return user ? <Outlet /> : <Navigate to="/login" />;
 };

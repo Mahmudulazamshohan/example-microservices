@@ -8,18 +8,18 @@ const Dotenv = require('dotenv-webpack');
 const { ModuleFederationPlugin } = webpack.container;
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const deps = require("./package.json").dependencies;
+const esbuild = require('esbuild-wasm');
 
 const buildDate = new Date().toLocaleString();
 
 require('dotenv').config({ silent: true });
 const enviroments = process?.env ?? {};
-
+process.env.ESBUILD_BINARY_PATH = require.resolve('esbuild-wasm/esbuild.wasm');
 const webpackConfig = (env: any, argv: { [key: string]: string }) => {
   const isProduction: boolean = argv.mode === "production";
-  let plugins: any[] = [];
-
+  
   return {
-    entry: path.join(__dirname, "./src/index.ts"),
+    entry: path.join(__dirname, "src/index.ts"), // Fixed entry path
     mode: argv?.mode || "development",
     devServer: {
       port: 4003,
@@ -47,24 +47,24 @@ const webpackConfig = (env: any, argv: { [key: string]: string }) => {
       rules: [
         {
           test: /\.(js|jsx|tsx|ts)$/,
-          loader: "babel-loader",
+          loader: 'swc-loader',
           exclude: /node_modules/,
           options: {
-            cacheDirectory: true,
-            babelrc: false,
-            presets: [
-              [
-                "@babel/preset-env",
-                { targets: { browsers: "last 2 versions" } },
-              ],
-              "@babel/preset-typescript",
-              "@babel/preset-react",
-            ],
-            plugins: [
-              require.resolve('react-refresh/babel'),
-            ].filter(Boolean),
+            jsc: {
+              parser: {
+                syntax: 'typescript',
+                tsx: true,
+              },
+              transform: {
+                react: {
+                  runtime: 'automatic',
+                  refresh: !isProduction,
+                },
+              },
+              target: 'es2015',
+            },
           },
-        },
+        }
       ],
     },
     plugins: [

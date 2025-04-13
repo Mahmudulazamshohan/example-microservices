@@ -11,15 +11,15 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Authentication API')
     .setDescription('The API description')
-    .setVersion('1.0')
+    .setVersion(process?.env?.VERSION || '1.0')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   const postmanCollection = new Collection({
     info: {
-      name: 'You App',
-      version: '1.0.1',
+      name: 'ProSpare Authentication API',
+      version: process?.env?.VERSION || '1.0.0',
     },
     item: [],
     variable: [
@@ -48,7 +48,7 @@ async function bootstrap() {
           method: method.toUpperCase(),
           header: [
             {
-              key: 'Authorization', // authorization token
+              key: 'Authorization',
               value: '',
               description: 'Bearer Token',
             },

@@ -47,26 +47,3 @@ export const useAuth = () => {
     logout,
   };
 };
-
-// import {
-//   useGetMeQuery,
-//   useLoginMutation,
-//   useSignupMutation,
-//   useLogoutMutation,
-// } from '../store/api/authApi';
-
-// export const useAuth = () => {
-//   const { data: user, isLoading, error } = useGetMeQuery();
-//   const [login] = useLoginMutation();
-//   const [signup] = useSignupMutation();
-//   const [logout] = useLogoutMutation();
-
-//   return {
-//     user: user?.data?.user,
-//     isLoading,
-//     error,
-//     login,
-//     signup,
-//     logout,
-//   };
-// };
